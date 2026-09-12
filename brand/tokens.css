@@ -1,0 +1,126 @@
+/* Rhode Island Track Club brand tokens
+   Single source of truth for every template in this repo.
+   Version 1.0.0, updated 2026-09-12.
+
+   HEX IS DIGITAL ONLY. Never sample a hex value from this file and convert it
+   to CMYK for a print job. The print values live in brand/tokens.json under
+   color.primary.*.cmyk and are reproduced in the comments below.
+
+   No template may hardcode a color, a font stack, or a type size. Import this
+   file and use the variables. If a value you need is missing, add it here. */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---- Primary palette (verified against the print-ready singlet file) ---- */
+  --ritc-blue:  #A2C9CF;  /* Baby Ocean Blue. Print CMYK 36 / 9 / 16 / 0 */
+  --ritc-navy:  #011E3D;  /* Deep Navy. Print CMYK 99.6 / 83.8 / 39.2 / 57 */
+  --ritc-white: #FFFFFF;  /* Print CMYK 0 / 0 / 0 / 0 */
+
+  /* ---- Secondary palette (outers and warmups; screen-sampled, CMYK unverified) ---- */
+  --ritc-sand:  #C6B79B;
+  --ritc-ebony: #1C1C1C;
+
+  /* ---- Semantic roles. Templates use these, not the raw names above. ---- */
+  --ground-primary: var(--ritc-navy);
+  --ground-light:   var(--ritc-white);
+  --ground-accent:  var(--ritc-blue);
+
+  --text-on-dark:        var(--ritc-white);
+  --text-on-dark-muted:  var(--ritc-blue);
+  --text-on-light:       var(--ritc-navy);
+  --text-on-accent:      var(--ritc-navy);
+
+  --rule-color: var(--ritc-blue);
+
+  /* Photo scrim. Navy at zero alpha to navy at 88%, so white type stays legible
+     over any photograph. Every photo slot gets one. */
+  --scrim-from: rgba(1, 30, 61, 0);
+  --scrim-mid:  rgba(1, 30, 61, 0.45);
+  --scrim-to:   rgba(1, 30, 61, 0.88);
+  --scrim-vertical: linear-gradient(180deg, var(--scrim-from) 0%, var(--scrim-mid) 55%, var(--scrim-to) 100%);
+  --scrim-full:     linear-gradient(180deg, rgba(1,30,61,0.55) 0%, rgba(1,30,61,0.75) 100%);
+
+  /* ---- Type families ---- */
+  --font-display: 'Oswald', 'Arial Narrow', 'Helvetica Neue Condensed', sans-serif;
+  --font-body:    'Archivo', 'Helvetica Neue', Arial, sans-serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ---- Type scale. Px on the 1x canvas (1080 wide). Export renders at 2x. ---- */
+  --fs-display: 96px;   --lh-display: 0.92;  --tr-display: -0.01em;
+  --fs-h1: 72px;        --lh-h1: 0.95;       --tr-h1: -0.005em;
+  --fs-h2: 54px;        --lh-h2: 1;
+  --fs-h3: 40px;        --lh-h3: 1.1;
+  --fs-eyebrow: 20px;   --lh-eyebrow: 1.2;   --tr-eyebrow: 0.18em;
+  --fs-body-lg: 32px;   --lh-body-lg: 1.35;
+  --fs-body: 26px;      --lh-body: 1.45;
+  --fs-caption: 21px;   --lh-caption: 1.4;   --tr-caption: 0.02em;
+  --fs-data: 44px;      --lh-data: 1;
+
+  /* ---- Spacing ---- */
+  --sp-xs: 12px;
+  --sp-sm: 20px;
+  --sp-md: 32px;
+  --sp-lg: 56px;
+  --sp-xl: 88px;
+  --margin: 72px;   /* the outer safe margin on every 1080-wide canvas */
+
+  /* ---- Canvas ---- */
+  --canvas-w: 1080px;
+  --canvas-portrait-h: 1350px;
+  --canvas-square-h: 1080px;
+  --canvas-story-h: 1920px;
+  --story-safe-top: 250px;
+  --story-safe-bottom: 320px;
+
+  /* ---- Logo ---- */
+  --logo-clear-ratio: 0.25;
+  --logo-min-digital: 96px;
+
+  /* ---- Lines ---- */
+  --bd-hairline: 2px;
+  --bd-rule: 4px;
+  --bd-heavy: 8px;
+  --radius-sm: 4px;
+  --radius-pill: 999px;
+}
+
+/* ---------- Shared primitives every template may use ---------- */
+
+.ritc-canvas {
+  width: var(--canvas-w);
+  position: relative;
+  overflow: hidden;
+  background: var(--ground-primary);
+  color: var(--text-on-dark);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+.ritc-canvas--portrait { height: var(--canvas-portrait-h); }
+.ritc-canvas--square   { height: var(--canvas-square-h); }
+.ritc-canvas--story    { height: var(--canvas-story-h); }
+
+.ritc-display { font-family: var(--font-display); font-weight: var(--fw-semibold); font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tr-display); text-transform: uppercase; margin: 0; }
+.ritc-h1      { font-family: var(--font-display); font-weight: var(--fw-semibold); font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tr-h1); text-transform: uppercase; margin: 0; }
+.ritc-h2      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h2); line-height: var(--lh-h2); text-transform: uppercase; margin: 0; }
+.ritc-h3      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h3); line-height: var(--lh-h3); text-transform: uppercase; margin: 0; }
+.ritc-eyebrow { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-eyebrow); line-height: var(--lh-eyebrow); letter-spacing: var(--tr-eyebrow); text-transform: uppercase; margin: 0; color: var(--text-on-dark-muted); }
+.ritc-body-lg { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); margin: 0; }
+.ritc-body    { font-size: var(--fs-body); line-height: var(--lh-body); margin: 0; }
+.ritc-caption { font-size: var(--fs-caption); line-height: var(--lh-caption); letter-spacing: var(--tr-caption); font-weight: var(--fw-medium); margin: 0; }
+.ritc-data    { font-size: var(--fs-data); line-height: var(--lh-data); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; margin: 0; }
+
+/* Photo slot. Cover crop plus the navy scrim, always. */
+.ritc-photo { position: absolute; inset: 0; overflow: hidden; }
+.ritc-photo > img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.ritc-photo::after { content: ''; position: absolute; inset: 0; background: var(--scrim-vertical); pointer-events: none; }
+.ritc-photo--full::after { background: var(--scrim-full); }
+
+/* The star column from the singlet, used as a vertical stripe motif. */
+.ritc-star-column { display: flex; flex-direction: column; align-items: center; gap: var(--sp-sm); color: var(--ritc-blue); }
+
+.ritc-rule { border: 0; height: var(--bd-rule); background: var(--rule-color); width: 100%; margin: 0; }
