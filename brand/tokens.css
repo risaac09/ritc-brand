@@ -9,7 +9,28 @@
    No template may hardcode a color, a font stack, or a type size. Import this
    file and use the variables. If a value you need is missing, add it here. */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+/* Fonts are vendored in assets/fonts/ rather than fetched from Google at
+   render time. Two reasons: an export must not silently fall back to Arial
+   when the network is unavailable, and a headless browser often does not
+   share the shell's proxy. Latin variable subsets, 56KB for both.
+   Paths are relative to this file, so a template in templates/ resolves
+   them correctly through the stylesheet. */
+
+@font-face {
+  font-family: 'Oswald';
+  src: url('../assets/fonts/oswald-latin-var.woff2') format('woff2-variations');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('../assets/fonts/archivo-latin-var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
 
 :root {
   /* ---- Primary palette (verified against the print-ready singlet file) ---- */
@@ -39,7 +60,10 @@
      boundary: warm outer takes the dark inner, dark outer takes the light
      inner. Use a --layer-* pair together. Do not mix across pairs. */
 
-  --frame-band: 56px;   /* frame thickness, full frame and hem bands alike */
+  --frame-band: 56px;   /* frame thickness on the top and sides */
+  --frame-waist: 200px; /* the deep bottom band. A jacket's waistband, and the
+                           only part of the frame wide enough to hold the
+                           badge, which belongs to the outer layer. */
 
   /* Pair A: Sand frame, Navy field. Boundary contrast 8.49. */
   --layer-a-frame:      var(--ritc-sand);
@@ -113,6 +137,9 @@
   --bd-heavy: 8px;
   --radius-sm: 4px;
   --radius-pill: 999px;
+
+  /* Preview chrome only. Never appears inside a canvas. */
+  --preview-bg: #6B7280;
 }
 
 /* ---------- Shared primitives every template may use ---------- */
@@ -162,8 +189,23 @@
   color: var(--frame-fg);
 }
 
-/* Full frame: warm band on all four sides. */
-.ritc-frame--full > .ritc-field { inset: var(--frame-band); }
+/* Full frame: warm band on all four sides, deeper at the bottom. */
+.ritc-frame--full > .ritc-field {
+  inset: var(--frame-band) var(--frame-band) var(--frame-waist) var(--frame-band);
+}
+
+/* The waistband itself, where the badge and the handle live. */
+.ritc-waist {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: var(--frame-waist);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding: 0 var(--frame-band);
+  box-sizing: border-box;
+  color: var(--frame-fg);
+}
 
 /* Hem bands: collar and cuff. Left and right bleed. */
 .ritc-frame--hem > .ritc-field { inset: var(--frame-band) 0; }
@@ -186,3 +228,34 @@
   --field-bg: var(--layer-b-field);
   --field-fg: var(--layer-b-field-text);
 }
+
+/* ---------- Marks ---------- */
+
+/* A template opened directly has no host reset, so [hidden] needs teeth
+   against the display rules below. */
+[hidden] { display: none !important; }
+
+.ritc-badge { position: relative; flex: none; }
+.ritc-badge > img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* Obvious on purpose. Nothing should ship with this visible. */
+.ritc-badge__placeholder {
+  position: absolute;
+  inset: 0;
+  border: var(--bd-rule) dashed currentColor;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+  opacity: 0.75;
+}
+.ritc-badge__note { font-family: var(--font-body); font-size: 11px; letter-spacing: 0; opacity: 0.8; }

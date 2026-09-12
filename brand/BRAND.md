@@ -167,8 +167,9 @@ layout seems to need Sand around a teal field, the layout is wrong, not the rule
 
 ### Frame geometry
 
-- **Full frame.** Sand or Ebony on all four sides, `--frame-band` wide (56px),
-  with the inner field inset inside it. The badge sits in the frame, not the
+- **Full frame.** Sand or Ebony on all four sides. 56px on the top and sides,
+  and 200px at the bottom, because a jacket has a waistband and because the
+  badge needs somewhere to live. The badge sits in that waistband, not in the
   field, which is where a logo sits on a jacket.
 - **Hem bands.** The same band on the top and bottom edges only, left and right
   running full bleed. Reads as a collar and a cuff. Use when the photograph
