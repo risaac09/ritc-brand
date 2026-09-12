@@ -31,4 +31,5 @@ and `brand/tokens.json`. If a value is missing, add it to both.
 
 ## Status
 
-Brand and tokens complete. Templates pending review of direction.
+Brand and tokens complete, including the layer structure. Templates pending
+review of direction.

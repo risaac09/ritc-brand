@@ -42,8 +42,8 @@ print values before any print job uses them.
 | Sand | `#C6B79B` | not yet specified | Fill only, outers context |
 | Ebony | `#1C1C1C` | not yet specified | Ground and text, outers context |
 
-Default to the primary palette. Reach for Sand and Ebony when a graphic is
-actually about the warmups or the apparel line, not for variety.
+Sand and Ebony are not an alternate palette and they are not there for variety.
+They have a structural job, described in section 2.
 
 ### Background and foreground
 
@@ -103,7 +103,87 @@ ground, and it drops to 1.78:1.
 
 ---
 
-## 2. Typography
+## 2. Structure: the warmups go over the singlet
+
+This is the organizing principle of the whole system. Every layout decision
+resolves to it.
+
+A runner at a Tuesday workout is wearing two layers. The Sand and Ebony warmups
+are on the outside. The Baby Ocean Blue and Navy singlet is underneath. That
+physical fact is the structure.
+
+**The outer layer frames. The inner layer fills.**
+
+- **Sand and Ebony are the outer layer.** Frames, edge bands, margin fields,
+  headers and hems, the surface the graphic sits on. They are chrome. They hold
+  the thing, they are not the thing.
+- **Baby Ocean Blue, Deep Navy, and White are the inner layer.** The field, the
+  photograph, the headline, the result, the runner. Everything the post is
+  actually about lives in the singlet palette.
+
+So the answer to which color is background and which is foreground is not a
+preference. The outer is the ground. The inner is the field. A graphic is a
+warm band with a singlet-colored field inside it, and the content is in the
+field.
+
+### The strip
+
+Warmups come off at the start line. That is the second half of the metaphor and
+it is what keeps the feed from looking like one repeated template.
+
+The more a graphic is about competing, the less frame it has.
+
+| Post type | Frame | Reasoning |
+|---|---|---|
+| Workout announcement | Full frame | Pre-race. Logistics. Warmups on. |
+| Event or race promo | Full frame | Pre-race. Warmups on. |
+| Member spotlight | Hem bands, top and bottom | Partly stripped. The person is the field. |
+| Quote or motto card | Hem bands | The club talking, not the club racing. |
+| Story | Hem bands, or none | Depends what is in it. |
+| Race recap and results | **No frame.** Full bleed singlet palette. | This is the race. Warmups are off. |
+
+A race recap with a Sand border on it is a runner who forgot to take their
+jacket off. Do not do it.
+
+### The two legal layer pairs
+
+The outer and inner colors have to separate at the boundary or the frame reads
+as mud. Measured, only two of the six combinations work.
+
+| Outer frame | Inner field | Ratio | Verdict |
+|---|---|---|---|
+| Ebony | White | 17.04 | Legal |
+| **Ebony** | **Baby Ocean Blue** | **9.57** | **Legal** |
+| **Sand** | **Deep Navy** | **8.49** | **Legal** |
+| White | Sand | 1.97 | Edge disappears |
+| Sand | Baby Ocean Blue | 1.11 | Edge disappears |
+| Ebony | Deep Navy | 1.02 | Edge disappears |
+
+The rule in one line: **the warm outer takes the dark inner, the dark outer
+takes the light inner.**
+
+Sand frame, navy field. Ebony frame, teal or white field. Nothing else. If a
+layout seems to need Sand around a teal field, the layout is wrong, not the rule.
+
+### Frame geometry
+
+- **Full frame.** Sand or Ebony on all four sides, `--frame-band` wide (56px),
+  with the inner field inset inside it. The badge sits in the frame, not the
+  field, which is where a logo sits on a jacket.
+- **Hem bands.** The same band on the top and bottom edges only, left and right
+  running full bleed. Reads as a collar and a cuff. Use when the photograph
+  needs the width.
+- **No frame.** The field bleeds to all four edges. Race day.
+
+### Where the star column goes
+
+The star column is stitched down the front seam of the singlet, so it belongs to
+the inner layer. Run it inside the field, never across the frame, and never as
+the frame itself. It is the one element that says which layer you are looking at.
+
+---
+
+## 3. Typography
 
 Both faces are on Google Fonts under the SIL Open Font License, so they are free
 to use, free to embed, and free to hand to a printer or a volunteer.
@@ -153,7 +233,7 @@ Nothing smaller than 21px. A caption below that disappears in the feed.
 
 ---
 
-## 3. The marks
+## 4. The marks
 
 ### Primary mark: the circular badge
 
@@ -216,7 +296,7 @@ From the singlet.
 
 ---
 
-## 4. Photography
+## 5. Photography
 
 Photography carries this account. The graphics system exists to frame it, not to
 replace it.
@@ -233,7 +313,7 @@ replace it.
 
 ---
 
-## 5. Voice
+## 6. Voice
 
 Community first, local, not corporate-slick.
 
@@ -269,7 +349,7 @@ Community first, local, not corporate-slick.
 
 ---
 
-## 6. Using the tokens
+## 7. Using the tokens
 
 `brand/tokens.css` and `brand/tokens.json` are the single source of truth.
 
@@ -281,7 +361,7 @@ Community first, local, not corporate-slick.
 
 ---
 
-## 7. Named gaps
+## 8. Named gaps
 
 Honest accounting of what is not settled.
 
@@ -293,7 +373,7 @@ Honest accounting of what is not settled.
    printer as they stand.
 3. **Logo files are not in this repo yet.** `assets/logo/` holds a labeled
    placeholder. Templates render the placeholder until the real files land.
-4. **This is the third palette decision on this project** (2026-08-23,
+4. **This is the fourth palette decision on this project** (2026-08-23,
    2026-08-24, 2026-09-01, and now). Five documents in the RITC Operations
    Package were built on the 2026-09-01 Sand and Ebony palette and are now off
    the primary palette. They are outside this repo and were not changed here.

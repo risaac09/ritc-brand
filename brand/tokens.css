@@ -33,6 +33,32 @@
 
   --rule-color: var(--ritc-blue);
 
+  /* ---- Layer structure: the warmups go over the singlet ----
+     Sand and Ebony are the OUTER layer, the frame. Baby Ocean Blue, Navy and
+     White are the INNER layer, the field. Only two pairings separate at the
+     boundary: warm outer takes the dark inner, dark outer takes the light
+     inner. Use a --layer-* pair together. Do not mix across pairs. */
+
+  --frame-band: 56px;   /* frame thickness, full frame and hem bands alike */
+
+  /* Pair A: Sand frame, Navy field. Boundary contrast 8.49. */
+  --layer-a-frame:      var(--ritc-sand);
+  --layer-a-frame-text: var(--ritc-ebony);
+  --layer-a-field:      var(--ritc-navy);
+  --layer-a-field-text: var(--ritc-white);
+
+  /* Pair B: Ebony frame, Baby Ocean Blue field. Boundary contrast 9.57. */
+  --layer-b-frame:      var(--ritc-ebony);
+  --layer-b-frame-text: var(--ritc-sand);
+  --layer-b-field:      var(--ritc-blue);
+  --layer-b-field-text: var(--ritc-navy);
+
+  /* Default layer pair. Templates override by setting these two. */
+  --frame-bg:    var(--layer-a-frame);
+  --frame-fg:    var(--layer-a-frame-text);
+  --field-bg:    var(--layer-a-field);
+  --field-fg:    var(--layer-a-field-text);
+
   /* Photo scrim. Navy at zero alpha to navy at 88%, so white type stays legible
      over any photograph. Every photo slot gets one. */
   --scrim-from: rgba(1, 30, 61, 0);
@@ -124,3 +150,39 @@
 .ritc-star-column { display: flex; flex-direction: column; align-items: center; gap: var(--sp-sm); color: var(--ritc-blue); }
 
 .ritc-rule { border: 0; height: var(--bd-rule); background: var(--rule-color); width: 100%; margin: 0; }
+
+/* ---------- Layer primitives ----------
+   A framed canvas is .ritc-canvas > .ritc-frame > .ritc-field.
+   An unframed one (race day) skips the frame and lets .ritc-field bleed. */
+
+.ritc-frame {
+  position: absolute;
+  inset: 0;
+  background: var(--frame-bg);
+  color: var(--frame-fg);
+}
+
+/* Full frame: warm band on all four sides. */
+.ritc-frame--full > .ritc-field { inset: var(--frame-band); }
+
+/* Hem bands: collar and cuff. Left and right bleed. */
+.ritc-frame--hem > .ritc-field { inset: var(--frame-band) 0; }
+
+.ritc-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--field-bg);
+  color: var(--field-fg);
+}
+
+/* Race day. No frame, field bleeds to every edge. */
+.ritc-field--bleed { inset: 0; }
+
+/* Opt in to the Ebony-over-teal pair on any canvas. */
+.ritc-layer-b {
+  --frame-bg: var(--layer-b-frame);
+  --frame-fg: var(--layer-b-frame-text);
+  --field-bg: var(--layer-b-field);
+  --field-fg: var(--layer-b-field-text);
+}
