@@ -1,6 +1,9 @@
-# RITC Instagram graphics
+# ritc-brand
 
-A reusable graphics system for @rhodeislandtrackclub. Self contained HTML
+Rhode Island Track Club internal repository for brand, graphics and social
+media.
+
+The first system in it is the Instagram graphics set: self contained HTML
 templates rendering at exact Instagram dimensions, driven by one set of brand
 tokens, exported to PNG at 2x.
 
@@ -9,7 +12,7 @@ No build step. No framework. Open a template in a browser and it renders.
 ## Layout
 
 ```
-brand/BRAND.md      the guide: color, type, marks, voice, named gaps
+brand/BRAND.md      the guide: color, structure, type, marks, voice, gaps
 brand/tokens.css    single source of truth, imported by every template
 brand/tokens.json   the same values for scripts and tooling
 assets/logo/        logo files (not yet supplied, see its README)
