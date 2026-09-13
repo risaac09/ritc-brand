@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RITC story, 1080x1920</title>
+<link rel="stylesheet" href="../brand/tokens.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     EDIT HERE. Copy only. Do not touch the layout below.
+     Anything in {{DOUBLE_BRACES}} is a placeholder for you to fill in.
+     ===================================================================== -->
+<script>
+const POST = {
+  // 'a' = Sand hem bands, Navy field, white text.
+  // 'b' = Ebony hem bands, Baby Ocean Blue field, navy text.
+  layer: 'a',
+
+  // 'hem' puts the thin collar-and-cuff bands top and bottom.
+  // 'none' lets the field bleed to all four edges.
+  // The brand guide leaves this one open because it depends what is in it:
+  // a photo-led story usually wants 'none', a text story reads better
+  // framed. Instagram covers the extreme top and bottom with its own UI
+  // anyway, so the bands are partly hidden in the app either way.
+  frame: 'hem',
+
+  eyebrow: '{{LABEL}}',
+  headline: '{{HEADLINE}}',
+
+  // One or two short lines. Anything longer belongs in a feed post.
+  lines: [
+    '{{LINE_ONE}}',
+  ],
+
+  // The ask, in an accent bar. Leave empty to hide it.
+  cta: '{{CALL_TO_ACTION}}',
+
+  // Path or URL. Leave empty for a solid field.
+  photo: '',
+  photoAlt: '',
+  scrim: 'vertical',
+
+  handle: '@rhodeislandtrackclub',
+
+  // Preview aid only. Turns on a visible marker for the zones Instagram
+  // covers with its own interface. Leave false for anything you export.
+  showSafeAreas: false,
+};
+</script>
+<!-- ===================== END OF EDITABLE COPY ========================== -->
+
+<div class="ritc-canvas ritc-canvas--story" id="canvas">
+  <div class="ritc-frame" id="frame">
+    <div class="ritc-field" id="field">
+
+      <div class="ritc-photo" id="photo" hidden>
+        <img id="photoImg" alt="">
+      </div>
+
+      <div class="st-stars-bar"></div>
+      <div class="st-stars ritc-star-column" data-ritc-star-column="30"></div>
+
+      <!-- Everything readable sits inside the safe band. Instagram puts its
+           own controls over the top 250px and the bottom 320px. -->
+      <div class="st-safe">
+        <div class="st-copy">
+          <p class="ritc-eyebrow" id="eyebrow"></p>
+          <h1 class="ritc-display st-headline" id="headline"></h1>
+          <div class="st-lines" id="lines"></div>
+          <p class="st-cta" id="cta" hidden></p>
+        </div>
+
+        <div class="st-footer">
+          <div data-ritc-badge="84"></div>
+          <p class="ritc-caption st-handle" id="handle"></p>
+        </div>
+      </div>
+
+      <div class="st-safe-guide" id="safeGuide" hidden>
+        <div class="st-safe-guide__top"></div>
+        <div class="st-safe-guide__bottom"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  body { margin: 0; background: var(--preview-bg); }
+
+  .st-stars-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: calc(var(--sp-md) + 30px + var(--sp-sm));
+    background: var(--edge-tint-fade);
+    pointer-events: none;
+  }
+  .st-stars {
+    position: absolute;
+    left: var(--sp-md);
+    top: var(--sp-md);
+    bottom: var(--sp-md);
+    width: 30px;
+    justify-content: space-between;
+    opacity: 0.85;
+  }
+
+  /* The readable band. Copy sits at the bottom of it, footer beneath,
+     both clear of Instagram's chrome. */
+  .st-safe {
+    position: absolute;
+    left: calc(var(--sp-md) + 30px + var(--sp-lg));
+    right: var(--sp-lg);
+    top: var(--story-safe-top);
+    bottom: var(--story-safe-bottom);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--sp-xl);
+  }
+
+  .st-headline { margin-top: var(--sp-sm); }
+
+  .st-lines {
+    margin-top: var(--sp-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+  }
+  .st-lines p {
+    margin: 0;
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+  }
+
+  .st-cta {
+    margin: var(--sp-lg) 0 0;
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: 1.15;
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+
+  .st-footer { display: flex; align-items: center; gap: var(--sp-md); }
+  .st-handle { opacity: 0.85; margin: 0; }
+
+  /* Preview aid. Never on in an export. */
+  .st-safe-guide__top,
+  .st-safe-guide__bottom {
+    position: absolute;
+    left: 0; right: 0;
+    background: repeating-linear-gradient(
+      45deg, var(--edge-tint), var(--edge-tint) 12px,
+      transparent 12px, transparent 24px);
+    border-block: var(--bd-hairline) dashed var(--rule-color);
+    pointer-events: none;
+  }
+  .st-safe-guide__top { top: 0; height: var(--story-safe-top); }
+  .st-safe-guide__bottom { bottom: 0; height: var(--story-safe-bottom); }
+</style>
+
+<script src="../brand/marks.js"></script>
+<script>
+  (function render() {
+    const canvas = document.getElementById('canvas');
+    if (POST.layer === 'b') canvas.classList.add('ritc-layer-b');
+
+    // 'hem' insets the field top and bottom via the frame modifier;
+    // 'none' uses the field's own bleed modifier, the same primitive the
+    // race recap template uses for its frameless canvas.
+    if (POST.frame === 'none') {
+      document.getElementById('field').classList.add('ritc-field--bleed');
+    } else {
+      document.getElementById('frame').classList.add('ritc-frame--hem');
+    }
+
+    document.getElementById('eyebrow').textContent = POST.eyebrow;
+    document.getElementById('handle').textContent = POST.handle;
+
+    const headlineEl = document.getElementById('headline');
+    headlineEl.textContent = POST.headline;
+
+    const lines = document.getElementById('lines');
+    (POST.lines || []).forEach((text) => {
+      const p = document.createElement('p');
+      p.textContent = text;
+      lines.appendChild(p);
+    });
+
+    if (POST.cta) {
+      const cta = document.getElementById('cta');
+      cta.textContent = POST.cta;
+      cta.hidden = false;
+    }
+
+    if (POST.photo) {
+      const slot = document.getElementById('photo');
+      const img = document.getElementById('photoImg');
+      img.src = POST.photo;
+      img.alt = POST.photoAlt || '';
+      slot.hidden = false;
+      // The scrim is navy whatever the layer, so the copy over it uses the
+      // on-navy foreground set. See .ritc-on-photo in tokens.css.
+      slot.closest('.ritc-field').classList.add('ritc-on-photo');
+      if (POST.scrim === 'full') slot.classList.add('ritc-photo--full');
+    }
+
+    if (POST.showSafeAreas) document.getElementById('safeGuide').hidden = false;
+
+    ritcAllowBreak(headlineEl);
+    ritcFitText(headlineEl, { maxLines: 4, min: 48 });
+
+    ritcPaintMarks();
+    document.fonts.ready.then(() => document.documentElement.setAttribute('data-ritc-ready', '1'));
+  })();
+</script>
+
+</body>
+</html>

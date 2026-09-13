@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RITC quote card, 1080x1080</title>
+<link rel="stylesheet" href="../brand/tokens.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     EDIT HERE. Copy only. Do not touch the layout below.
+     Anything in {{DOUBLE_BRACES}} is a placeholder for you to fill in.
+     ===================================================================== -->
+<script>
+const POST = {
+  // 'a' = Sand hem bands, Navy field, white text.
+  // 'b' = Ebony hem bands, Baby Ocean Blue field, navy text.
+  layer: 'a',
+
+  // The club's own lines, safe to use as they stand:
+  //   'Hope is our anchor.'
+  //   'Built for Rhode Island. Built for Speed.'
+  //   'To provide committed runners the opportunity to train and compete.'
+  quote: '{{QUOTE_OR_MOTTO}}',
+
+  // Who said it. A member's name, or something like 'Club motto'.
+  // Leave empty to hide it.
+  attribution: '{{ATTRIBUTION}}',
+
+  // The state motto, set the way the brand guide asks for it: small and
+  // widely tracked, a kicker rather than a headline. Off by default,
+  // because the club's own lines already say HOPE and running it as a
+  // kicker above 'Hope is our anchor.' just says the word twice.
+  // Turn it on for a quote that does not mention it.
+  motto: '',
+
+  // Path or URL. Leave empty for a solid field, which is the usual choice
+  // for this one: the words are the whole card.
+  photo: '',
+  photoAlt: '',
+  scrim: 'full',
+
+  handle: '@rhodeislandtrackclub',
+};
+</script>
+<!-- ===================== END OF EDITABLE COPY ========================== -->
+
+<div class="ritc-canvas ritc-canvas--square" id="canvas">
+  <div class="ritc-frame ritc-frame--hem">
+    <div class="ritc-field">
+
+      <div class="ritc-photo" id="photo" hidden>
+        <img id="photoImg" alt="">
+      </div>
+
+      <div class="qc-stars-bar"></div>
+      <div class="qc-stars ritc-star-column" data-ritc-star-column="26"></div>
+
+      <!-- The quote is the whole card, so it centres in the field rather
+           than sitting on the baseline like the photo-led templates. -->
+      <div class="qc-body">
+        <p class="qc-motto" id="motto" hidden></p>
+        <blockquote class="ritc-display qc-quote" id="quote"></blockquote>
+        <p class="ritc-caption qc-attribution" id="attribution" hidden></p>
+      </div>
+
+      <div class="qc-footer">
+        <div data-ritc-badge="76"></div>
+        <p class="ritc-caption qc-handle" id="handle"></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  body { margin: 0; background: var(--preview-bg); }
+
+  .qc-stars-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: calc(var(--sp-md) + 26px + var(--sp-sm));
+    background: var(--edge-tint-fade);
+    pointer-events: none;
+  }
+  .qc-stars {
+    position: absolute;
+    left: var(--sp-md);
+    top: var(--sp-md);
+    bottom: var(--sp-md);
+    width: 26px;
+    justify-content: space-between;
+    opacity: 0.85;
+  }
+
+  .qc-body {
+    position: absolute;
+    left: calc(var(--sp-md) + 26px + var(--sp-lg));
+    right: var(--sp-lg);
+    top: var(--sp-lg);
+    bottom: 140px;  /* clears the footer row */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* HOPE, per the brand guide: small and widely tracked, a kicker rather
+     than a headline. */
+  .qc-motto {
+    margin: 0 0 var(--sp-md);
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--field-fg-muted);
+  }
+
+  .qc-quote {
+    position: relative;
+    margin: 0;
+    padding-left: var(--sp-xl);
+    /* The display scale's 0.92 leading is tuned for one- and two-line
+       headlines. A quote runs as prose and can hit four or five lines,
+       where 0.92 reads cramped, so this opens up slightly. Still tighter
+       than body copy, so it stays display type rather than becoming a
+       paragraph. ritcFitText counts lines with Range rects, not with
+       line-height arithmetic, so the fitter is unaffected. */
+    line-height: 1.02;
+  }
+  .qc-quote::before {
+    content: '\201C';
+    position: absolute;
+    left: 0;
+    top: -0.18em;
+    font-family: var(--font-display);
+    font-size: 1.15em;
+    line-height: 1;
+    color: var(--rule-color);
+  }
+
+  .qc-attribution {
+    margin: var(--sp-lg) 0 0;
+    padding-left: var(--sp-xl);
+    color: var(--field-fg-muted);
+  }
+
+  .qc-footer {
+    position: absolute;
+    left: calc(var(--sp-md) + 26px + var(--sp-lg));
+    right: var(--sp-lg);
+    bottom: var(--sp-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+  }
+  .qc-handle { opacity: 0.85; margin: 0; }
+</style>
+
+<script src="../brand/marks.js"></script>
+<script>
+  (function render() {
+    const canvas = document.getElementById('canvas');
+    if (POST.layer === 'b') canvas.classList.add('ritc-layer-b');
+
+    document.getElementById('handle').textContent = POST.handle;
+
+    const quoteEl = document.getElementById('quote');
+    quoteEl.textContent = POST.quote;
+
+    if (POST.motto) {
+      const motto = document.getElementById('motto');
+      motto.textContent = POST.motto;
+      motto.hidden = false;
+    }
+
+    if (POST.attribution) {
+      const attribution = document.getElementById('attribution');
+      attribution.textContent = POST.attribution;
+      attribution.hidden = false;
+    }
+
+    if (POST.photo) {
+      const slot = document.getElementById('photo');
+      const img = document.getElementById('photoImg');
+      img.src = POST.photo;
+      img.alt = POST.photoAlt || '';
+      slot.hidden = false;
+      // The scrim is navy whatever the layer, so the copy over it uses the
+      // on-navy foreground set. See .ritc-on-photo in tokens.css.
+      slot.closest('.ritc-field').classList.add('ritc-on-photo');
+      if (POST.scrim === 'full') slot.classList.add('ritc-photo--full');
+    }
+
+    // The quote carries the card, so it gets more room to breathe than a
+    // headline does: up to five lines before it starts stepping down.
+    ritcAllowBreak(quoteEl);
+    ritcFitText(quoteEl, {
+      maxLines: 5,
+      min: 40,
+      maxHeight: document.querySelector('.qc-body').clientHeight
+        - (POST.motto ? 60 : 0) - (POST.attribution ? 80 : 0),
+    });
+
+    ritcPaintMarks();
+    document.fonts.ready.then(() => document.documentElement.setAttribute('data-ritc-ready', '1'));
+  })();
+</script>
+
+</body>
+</html>

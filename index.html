@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RITC template gallery</title>
+<link rel="stylesheet" href="brand/tokens.css">
+<style>
+  body {
+    margin: 0;
+    background: var(--preview-bg);
+    font-family: var(--font-body);
+    color: var(--ritc-white);
+  }
+  .g-head {
+    padding: var(--sp-xl) var(--margin) var(--sp-lg);
+    max-width: 1100px;
+  }
+  .g-head h1 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    text-transform: uppercase;
+    margin: 0 0 var(--sp-sm);
+  }
+  .g-head p { margin: 0 0 var(--sp-sm); line-height: 1.5; max-width: 62ch; }
+  .g-head code { background: rgba(0,0,0,0.28); padding: 1px 6px; border-radius: 4px; }
+
+  .g-rail {
+    display: flex;
+    gap: var(--sp-xl);
+    align-items: flex-start;
+    overflow-x: auto;
+    padding: var(--sp-lg) var(--margin) var(--sp-xl);
+  }
+  .g-item { flex: none; }
+  .g-item h2 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 4px;
+  }
+  .g-meta { margin: 0 0 var(--sp-sm); font-size: 14px; opacity: 0.75; }
+
+  /* Each frame shows the real template at true size, scaled down to fit
+     the rail. transform keeps the rendering identical to an export. */
+  .g-frame {
+    border: 0;
+    display: block;
+    transform-origin: top left;
+    background: #000;
+  }
+  .g-shell { overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+</style>
+</head>
+<body>
+
+<div class="g-head">
+  <h1>RITC template gallery</h1>
+  <p>
+    Every template at its real size, rendered live from the same files the
+    export script uses, scaled to fit. What you see here is what
+    <code>npm run export</code> writes, so use it to eyeball consistency
+    across the set rather than checking each file one at a time.
+  </p>
+  <p>
+    Each one is showing its own placeholder copy. Edit the <code>POST</code>
+    object at the top of a template to change it.
+  </p>
+</div>
+
+<div class="g-rail" id="rail"></div>
+
+<script>
+  const SCALE = 0.26;
+
+  const TEMPLATES = [
+    { file: 'workout-announcement.html', name: 'Workout announcement', w: 1080, h: 1350, frame: 'Full frame' },
+    { file: 'event-promo.html',          name: 'Event promo',          w: 1080, h: 1350, frame: 'Full frame' },
+    { file: 'member-spotlight.html',     name: 'Member spotlight',     w: 1080, h: 1350, frame: 'Hem bands' },
+    { file: 'race-recap.html',           name: 'Race recap',           w: 1080, h: 1350, frame: 'No frame' },
+    { file: 'quote-card.html',           name: 'Quote card',           w: 1080, h: 1080, frame: 'Hem bands' },
+    { file: 'story.html',                name: 'Story',                w: 1080, h: 1920, frame: 'Hem bands' },
+  ];
+
+  const rail = document.getElementById('rail');
+
+  TEMPLATES.forEach((t) => {
+    const item = document.createElement('div');
+    item.className = 'g-item';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = t.name;
+
+    const meta = document.createElement('p');
+    meta.className = 'g-meta';
+    meta.textContent = `${t.w} x ${t.h}  ${String.fromCharCode(183)}  ${t.frame}`;
+
+    const shell = document.createElement('div');
+    shell.className = 'g-shell';
+    shell.style.width = Math.round(t.w * SCALE) + 'px';
+    shell.style.height = Math.round(t.h * SCALE) + 'px';
+
+    const frame = document.createElement('iframe');
+    frame.className = 'g-frame';
+    frame.src = 'templates/' + t.file;
+    frame.width = t.w;
+    frame.height = t.h;
+    frame.loading = 'eager';
+    frame.style.transform = `scale(${SCALE})`;
+
+    shell.appendChild(frame);
+    item.append(h2, meta, shell);
+    rail.appendChild(item);
+  });
+</script>
+
+</body>
+</html>

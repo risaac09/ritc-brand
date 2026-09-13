@@ -180,6 +180,9 @@ const POST = {
       img.src = POST.photo;
       img.alt = POST.photoAlt || '';
       slot.hidden = false;
+      // The scrim is navy whatever the layer, so the copy over it uses the
+      // on-navy foreground set. See .ritc-on-photo in tokens.css.
+      slot.closest('.ritc-field').classList.add('ritc-on-photo');
       if (POST.scrim === 'full') slot.classList.add('ritc-photo--full');
     }
 

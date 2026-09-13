@@ -47,14 +47,32 @@ and `brand/tokens.json`. If a value is missing, add it to both.
 
 ## Status
 
-Brand, tokens, and the export pipeline are complete. Four templates built:
+All six templates are built, plus the gallery and the export pipeline.
 
-- **workout announcement** and **event promo**, the full-frame cases (frame
-  on all sides, deep waistband carrying the badge)
-- **member spotlight**, the hem-band case (collar-and-cuff bands only)
-- **race recap**, the no-frame case (full bleed, the strip rule)
+| Template | Size | Frame case |
+|---|---|---|
+| Workout announcement | 1080x1350 | Full frame |
+| Event promo | 1080x1350 | Full frame |
+| Member spotlight | 1080x1350 | Hem bands |
+| Race recap | 1080x1350 | No frame |
+| Quote card | 1080x1080 | Hem bands |
+| Story | 1080x1920 | Hem bands or none |
 
-Two remain: quote card and story.
+Open `index.html` to see all six side by side at true size, rendered live from
+the same files the export script uses.
 
-Logo files are not yet supplied, so templates render a labeled placeholder.
-See `assets/logo/README.md`.
+### Still outstanding
+
+These need a person, not more code:
+
+- **A decision on the badge palette.** The 2020 badge is bright blue and
+  yellow; the 2026 kit is navy and teal. Both work as they stand, but they are
+  two colour systems. `docs/LOGO-DESIGN-BRIEF.md` states the choice.
+- **Vector source for the badge, and a drawn standalone anchor.** Everything in
+  `assets/logo/` is derived from a 1025px raster. The extracted anchor is clean
+  under about 120px and shows artifacts above that.
+- **Confirmation on the maple leaf** at the badge's crown.
+- **A real race photo** to check the scrim against. The templates have only
+  been tested against a synthetic stand-in.
+- **CMYK values for Sand and Ebony**, which are screen-sampled rather than read
+  from a print file. Do not send them to a printer as they stand.

@@ -330,6 +330,9 @@ replace it.
   road, or a blown-out sky without anyone checking each time.
 - Faces near the bottom edge will land under the scrim. Compose for it, or use a
   full-field scrim at lower opacity.
+- Text over a photo always uses the on-navy colors, because the scrim is
+  always navy. This is automatic, not a judgment call: see the photo-ground
+  note in section 7.
 - Do not put text over the middle of a face.
 - Do not add a filter that shifts the singlet's teal. The kit color is the brand.
 
@@ -402,6 +405,14 @@ to both layers and measure both before using it.
 The one deliberate exception is the photo scrim, which is always navy
 regardless of layer, because it exists to darken a photograph rather than to
 sit on a field.
+
+That exception has a consequence worth stating on its own: **a photograph
+brings its own ground.** Because the scrim is always navy, anything laid over
+a photo is on a navy ground whatever layer the template selected. On layer B,
+whose field text is navy, that means navy text on a navy scrim. Templates
+handle it by adding `.ritc-on-photo` to the field whenever a photo is present,
+which reverts the foreground roles to the on-navy set. The frame bands sit
+outside the photo and keep their own layer colors.
 
 ---
 

@@ -242,6 +242,26 @@
 /* Race day. No frame, field bleeds to every edge. */
 .ritc-field--bleed { inset: 0; }
 
+/* A photograph brings its own ground.
+
+   The scrim is always navy, deliberately, because its job is to darken a
+   photograph rather than to sit on a field. That means anything laid over a
+   photo is on a navy ground no matter which layer the template selected. On
+   layer B, whose field text is navy, that produced navy text on a navy
+   scrim: legible only by accident and well under AA.
+
+   So when a photo is present, the foreground roles revert to the on-navy
+   set. Only the foregrounds: --field-bg is left alone, since the photo
+   covers it anyway, and the frame bands sit outside the photo and keep
+   their own layer colors. */
+.ritc-on-photo {
+  --field-fg:       var(--layer-a-field-text);
+  --field-fg-muted: var(--layer-a-field-muted);
+  --rule-color:     var(--layer-a-rule);
+  --accent-bg:      var(--layer-a-accent);
+  --accent-fg:      var(--layer-a-accent-text);
+}
+
 /* Opt in to the Ebony-over-teal pair on any canvas. */
 .ritc-layer-b {
   --frame-bg: var(--layer-b-frame);
