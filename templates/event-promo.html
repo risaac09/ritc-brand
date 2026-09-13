@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RITC event promo, 1080x1350</title>
+<link rel="stylesheet" href="../brand/tokens.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     EDIT HERE. Copy only. Do not touch the layout below.
+     Anything in {{DOUBLE_BRACES}} is a placeholder for you to fill in.
+     ===================================================================== -->
+<script>
+const POST = {
+  // 'a' = Sand frame over Navy field. 'b' = Ebony frame over Baby Ocean Blue.
+  layer: 'a',
+
+  eyebrow: 'Upcoming Race',
+  title: '{{EVENT_NAME}}',
+
+  // Two to four rows. The date and the place are the two that matter.
+  details: [
+    { label: 'When',     value: '{{DATE}}' },
+    { label: 'Where',    value: '{{LOCATION}}' },
+    { label: 'Distance', value: '{{DISTANCE}}' },
+  ],
+
+  // The ask. This is what makes a promo a promo rather than an
+  // announcement, so keep it short and make it an actual instruction:
+  // "Register by Sept 30", "Sign up at the Tuesday workout".
+  // Leave empty to hide the bar.
+  cta: '{{CALL_TO_ACTION}}',
+
+  // Path or URL. Leave empty for a solid field with no photograph.
+  photo: '',
+  photoAlt: '',
+  // 'vertical' keeps the top of the photo clear. 'full' darkens evenly.
+  scrim: 'vertical',
+
+  handle: '@rhodeislandtrackclub',
+};
+</script>
+<!-- ===================== END OF EDITABLE COPY ========================== -->
+
+<div class="ritc-canvas ritc-canvas--portrait" id="canvas">
+  <div class="ritc-frame ritc-frame--full">
+
+    <div class="ritc-field">
+      <div class="ritc-photo" id="photo" hidden>
+        <img id="photoImg" alt="">
+      </div>
+
+      <div class="ep-stars-bar"></div>
+      <div class="ep-stars ritc-star-column" data-ritc-star-column="30"></div>
+
+      <div class="ep-copy">
+        <p class="ritc-eyebrow" id="eyebrow"></p>
+        <h1 class="ritc-display ep-title" id="title"></h1>
+        <dl class="ep-details" id="details"></dl>
+        <p class="ep-cta" id="cta" hidden></p>
+      </div>
+    </div>
+
+    <div class="ritc-waist">
+      <div data-ritc-badge="136"></div>
+      <div class="ep-waist-text">
+        <p class="ritc-h3 ep-clubname">Rhode Island<br>Track Club</p>
+        <p class="ritc-caption ep-handle" id="handle"></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  body { margin: 0; background: var(--preview-bg); }
+
+  .ep-stars-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: calc(var(--sp-md) + 30px + var(--sp-sm));
+    background: var(--edge-tint-fade);
+    pointer-events: none;
+  }
+  .ep-stars {
+    position: absolute;
+    left: var(--sp-md);
+    top: var(--sp-md);
+    bottom: var(--sp-md);
+    width: 30px;
+    justify-content: space-between;
+    opacity: 0.85;
+  }
+
+  .ep-copy {
+    position: absolute;
+    left: calc(var(--sp-md) + 30px + var(--sp-lg));
+    right: var(--sp-lg);
+    bottom: var(--sp-lg);
+  }
+
+  .ep-title { margin-top: var(--sp-sm); }
+
+  .ep-details {
+    margin: var(--sp-lg) 0 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--sp-md);
+    row-gap: var(--sp-sm);
+    align-items: baseline;
+  }
+  .ep-details dt {
+    font-family: var(--font-display);
+    font-size: var(--fs-eyebrow);
+    line-height: var(--lh-body-lg);
+    letter-spacing: var(--tr-eyebrow);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    color: var(--field-fg-muted);
+    white-space: nowrap;
+  }
+  .ep-details dd {
+    margin: 0;
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+  }
+
+  /* The ask. An accent-filled bar so it reads as a button-shaped
+     instruction rather than another line of body copy. */
+  .ep-cta {
+    margin: var(--sp-lg) 0 0;
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: 1.15;
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    border-radius: var(--radius-sm);
+  }
+
+  .ep-waist-text { display: flex; flex-direction: column; gap: 4px; }
+  .ep-clubname { letter-spacing: 0.01em; }
+  .ep-handle { opacity: 0.75; }
+</style>
+
+<script src="../brand/marks.js"></script>
+<script>
+  (function render() {
+    const canvas = document.getElementById('canvas');
+    if (POST.layer === 'b') canvas.classList.add('ritc-layer-b');
+
+    document.getElementById('eyebrow').textContent = POST.eyebrow;
+    document.getElementById('handle').textContent = POST.handle;
+
+    const titleEl = document.getElementById('title');
+    titleEl.textContent = POST.title;
+
+    const dl = document.getElementById('details');
+    POST.details.forEach(({ label, value }) => {
+      const dt = document.createElement('dt');
+      dt.textContent = label;
+      const dd = document.createElement('dd');
+      dd.textContent = value;
+      dl.append(dt, dd);
+    });
+
+    if (POST.cta) {
+      const cta = document.getElementById('cta');
+      cta.textContent = POST.cta;
+      cta.hidden = false;
+    }
+
+    if (POST.photo) {
+      const slot = document.getElementById('photo');
+      const img = document.getElementById('photoImg');
+      img.src = POST.photo;
+      img.alt = POST.photoAlt || '';
+      slot.hidden = false;
+      if (POST.scrim === 'full') slot.classList.add('ritc-photo--full');
+    }
+
+    ritcAllowBreak(titleEl);
+    ritcFitText(titleEl, { maxLines: 3, min: 48 });
+
+    ritcPaintMarks();
+    document.fonts.ready.then(() => document.documentElement.setAttribute('data-ritc-ready', '1'));
+  })();
+</script>
+
+</body>
+</html>
