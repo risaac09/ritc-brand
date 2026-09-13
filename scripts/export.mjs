@@ -62,10 +62,9 @@ for (const file of files) {
 
   const problems = [];
   page.on('pageerror', (e) => problems.push(`js: ${e.message}`));
-  page.on('requestfailed', (r) => {
-    // A missing logo file is expected until the real assets land.
-    if (!r.url().includes('/assets/logo/')) problems.push(`load: ${r.url()}`);
-  });
+  // Every asset matters now that the logo files exist. A silently missing
+  // badge is exactly the failure this is here to catch.
+  page.on('requestfailed', (r) => problems.push(`load: ${r.url()}`));
 
   try {
     await page.goto(pathToFileURL(join(TEMPLATES, file)).href);
@@ -78,6 +77,10 @@ for (const file of files) {
     const box = await canvas.boundingBox();
     const out = join(OUT, `${name}.png`);
     await canvas.screenshot({ path: out, scale: 'device' });
+
+    // A visible placeholder means a mark did not load. Fail loudly.
+    const placeholders = await page.locator('.ritc-badge__placeholder:not([hidden])').count();
+    if (placeholders) problems.push(`${placeholders} logo placeholder(s) still visible`);
 
     const px = `${Math.round(box.width * scale)}x${Math.round(box.height * scale)}`;
     console.log(`  ${name.padEnd(26)} ${px.padEnd(11)} ${problems.length ? 'WARN ' + problems.join('; ') : 'ok'}`);

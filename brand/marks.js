@@ -4,7 +4,13 @@
 
    No hardcoded colors here. Marks inherit currentColor or read a token. */
 
-const RITC_LOGO_DIR = 'assets/logo/';
+/* Resolve the logo directory against THIS FILE's location, not the page's.
+   A template in templates/ resolving 'assets/logo/' relatively would look in
+   templates/assets/logo/ and silently fall back to the placeholder. */
+const RITC_LOGO_DIR = (() => {
+  const self = document.currentScript && document.currentScript.src;
+  return self ? new URL('../assets/logo/', self).href : '../assets/logo/';
+})();
 
 /* The circular badge. Returns an element. Pass the diameter in px. */
 function ritcBadge(diameter = 140) {

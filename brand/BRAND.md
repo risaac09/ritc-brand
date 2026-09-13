@@ -238,9 +238,25 @@ Nothing smaller than 21px. A caption below that disappears in the feed.
 
 ### Primary mark: the circular badge
 
-Circular badge, navy field, white rope border, white anchor with an RI-style
-emblem at the crown, RHODE ISLAND above TRACK CLUB in white condensed caps.
-Original master files date to 2020 and predate the 2026 kit refresh.
+Circular badge, **bright blue field `#0E5CC6`**, **yellow rope border and
+yellow wordmark `#F5E056`**, white anchor, with a **maple leaf** at the
+anchor's crown. RHODE ISLAND above TRACK CLUB in condensed caps.
+
+Corrected 2026-09-12 against the actual master files. The earlier description
+here said navy field, white rope, white anchor, and an RI-style emblem at the
+crown. All three colour claims and the emblem were wrong. The masters are 2020
+CMYK JPEGs and predate the 2026 kit refresh.
+
+**The badge is on a different colour system than the 2026 singlet.** Bright
+blue and yellow are not in the primary palette and not in the secondary one.
+This is unresolved and it is the club's decision, not this document's: either
+the badge gets redrawn on the 2026 colours, or the graphics system carries a
+blue and yellow badge on navy and teal layouts. See `assets/logo/README.md`.
+
+It does work on every ground in this system as it stands. The badge's outermost
+element is the yellow rope, not the blue field, so the boundary that matters
+measures 12.50 against Deep Navy. Verified by rendering on all four grounds at
+sizes from 170px down to 48px.
 
 **Clear space.** 25 percent of the badge diameter, on all four sides. At a 200px
 badge that is 50px of nothing. No type, no photo edge, no other mark inside it.
@@ -252,17 +268,20 @@ rope border fills in and the wordmark closes up.
 compliant. Back 2.25 to 2.5 inches, centered top. These are the apparel specs,
 not social specs, but they are the reason the badge is drawn to survive small.
 
-**Ground.** The badge has a navy field of its own, so it sits on white, on Baby
-Ocean Blue, and on a photograph without a container. On a navy ground it needs
-either the white rope border to carry the edge or a small amount of separation.
-Do not put a navy badge on navy and hope.
+**Ground.** The badge carries its own field and its own rope edge, so it sits
+on Sand, White, Baby Ocean Blue, Deep Navy, Ebony, and on a photograph, with no
+container and no separation needed. The yellow rope does that work.
 
 ### Secondary marks
 
 From the singlet.
 
-- **Solid navy anchor**, standalone. The quiet mark. Use where the full badge
-  would be too much, or at very small sizes.
+- **Solid anchor**, standalone, in `assets/logo/` as navy, white, and teal.
+  The quiet mark. Use where the full badge would be too much, or at small
+  sizes. The current file is extracted from the badge rather than drawn, and
+  the wordmark that crosses the anchor takes bites out of the shank and the
+  flukes, so it reads cleanly at about 120px and below and shows artifacts
+  above that. A drawn replacement is on the list in `assets/logo/README.md`.
 - **Five-point navy star.** Single, as an accent or a divider.
 - **Repeating star column.** A vertical stripe of stars, taken from the front
   seam of the singlet, which itself echoes the thirteen stars of the state flag.
@@ -283,8 +302,10 @@ From the singlet.
 
 ### Don't
 
-- Do not recolor the badge. It is navy and white. There is no teal version, no
-  one-color knockout, no inverted version, until the designer draws one.
+- Do not recolor the badge. It is blue and yellow, whatever the rest of the
+  system is doing. There is no navy version, no teal version, no one-color
+  knockout, until the designer draws one. A black and white master exists and
+  is in `assets/logo/` as `ritc-badge-bw.png`.
 - Do not put the badge on a busy part of a photograph. Scrim it or move it.
 - Do not stretch, skew, rotate, or arc any mark.
 - Do not add a drop shadow, an outer glow, or a stroke to the badge.
@@ -372,11 +393,18 @@ Honest accounting of what is not settled.
 2. **Sand and Ebony have no CMYK values** and their hex values are screen-sampled
    from a colorway sheet, not read from a print file. Do not send them to a
    printer as they stand.
-3. **Logo files are not in this repo yet.** `assets/logo/` holds a labeled
-   placeholder. Templates render the placeholder until the real files land.
+3. **Logo files are derived, not original.** `assets/logo/` now holds
+   transparent PNGs and traced SVGs built from the 2020 master JPGs by
+   `scripts/build-logo-assets.py`. No vector source exists. The standalone
+   anchor is extracted rather than drawn and has artifacts. Full accounting in
+   `assets/logo/README.md`.
 4. **This is the fourth palette decision on this project** (2026-08-23,
    2026-08-24, 2026-09-01, and now). Five documents in the RITC Operations
    Package were built on the 2026-09-01 Sand and Ebony palette and are now off
    the primary palette. They are outside this repo and were not changed here.
-5. **Pantone values are unspecified** for every color. If the club orders
+5. **The badge carries a maple leaf** at the anchor's crown. Rhode Island's own
+   emblem is an anchor, so this is an odd pairing and may be inherited from a
+   stock template. Worth confirming with the club before the mark is reused
+   further.
+6. **Pantone values are unspecified** for every color. If the club orders
    anything screen printed rather than sublimated, someone needs to pick them.
