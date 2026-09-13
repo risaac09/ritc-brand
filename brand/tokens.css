@@ -70,18 +70,21 @@
   --layer-a-frame-text: var(--ritc-ebony);
   --layer-a-field:      var(--ritc-navy);
   --layer-a-field-text: var(--ritc-white);
+  --layer-a-field-muted: var(--ritc-blue);   /* on navy: 9.40 */
 
   /* Pair B: Ebony frame, Baby Ocean Blue field. Boundary contrast 9.57. */
   --layer-b-frame:      var(--ritc-ebony);
   --layer-b-frame-text: var(--ritc-sand);
   --layer-b-field:      var(--ritc-blue);
   --layer-b-field-text: var(--ritc-navy);
+  --layer-b-field-muted: rgba(1, 30, 61, 0.7);   /* navy at 70% over teal: 4.70, measured */
 
   /* Default layer pair. Templates override by setting these two. */
   --frame-bg:    var(--layer-a-frame);
   --frame-fg:    var(--layer-a-frame-text);
   --field-bg:    var(--layer-a-field);
   --field-fg:    var(--layer-a-field-text);
+  --field-fg-muted: var(--layer-a-field-muted);
 
   /* Photo scrim. Navy at zero alpha to navy at 88%, so white type stays legible
      over any photograph. Every photo slot gets one. */
@@ -90,6 +93,12 @@
   --scrim-to:   rgba(1, 30, 61, 0.88);
   --scrim-vertical: linear-gradient(180deg, var(--scrim-from) 0%, var(--scrim-mid) 55%, var(--scrim-to) 100%);
   --scrim-full:     linear-gradient(180deg, rgba(1,30,61,0.55) 0%, rgba(1,30,61,0.75) 100%);
+
+  /* Subtle edge tint behind an inner-layer element (the star column) when it
+     sits directly over a photograph on an unframed canvas, so it stays legible
+     without a full scrim. Same navy as the scrim family, lower opacity. */
+  --edge-tint: rgba(1, 30, 61, 0.35);
+  --edge-tint-fade: linear-gradient(90deg, var(--edge-tint) 0%, rgba(1, 30, 61, 0) 100%);
 
   /* ---- Type families ---- */
   --font-display: 'Oswald', 'Arial Narrow', 'Helvetica Neue Condensed', sans-serif;
@@ -161,7 +170,7 @@
 .ritc-h1      { font-family: var(--font-display); font-weight: var(--fw-semibold); font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tr-h1); text-transform: uppercase; margin: 0; }
 .ritc-h2      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h2); line-height: var(--lh-h2); text-transform: uppercase; margin: 0; }
 .ritc-h3      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h3); line-height: var(--lh-h3); text-transform: uppercase; margin: 0; }
-.ritc-eyebrow { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-eyebrow); line-height: var(--lh-eyebrow); letter-spacing: var(--tr-eyebrow); text-transform: uppercase; margin: 0; color: var(--text-on-dark-muted); }
+.ritc-eyebrow { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-eyebrow); line-height: var(--lh-eyebrow); letter-spacing: var(--tr-eyebrow); text-transform: uppercase; margin: 0; color: var(--field-fg-muted); }
 .ritc-body-lg { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); margin: 0; }
 .ritc-body    { font-size: var(--fs-body); line-height: var(--lh-body); margin: 0; }
 .ritc-caption { font-size: var(--fs-caption); line-height: var(--lh-caption); letter-spacing: var(--tr-caption); font-weight: var(--fw-medium); margin: 0; }
@@ -174,7 +183,10 @@
 .ritc-photo--full::after { background: var(--scrim-full); }
 
 /* The star column from the singlet, used as a vertical stripe motif. */
-.ritc-star-column { display: flex; flex-direction: column; align-items: center; gap: var(--sp-sm); color: var(--ritc-blue); }
+/* The star column's color follows the same layer-aware muted token as
+   .ritc-eyebrow. Both templates compose this with their own positioning
+   class rather than duplicating the color rule locally. */
+.ritc-star-column { display: flex; flex-direction: column; align-items: center; gap: var(--sp-sm); color: var(--field-fg-muted); }
 
 .ritc-rule { border: 0; height: var(--bd-rule); background: var(--rule-color); width: 100%; margin: 0; }
 
@@ -227,6 +239,7 @@
   --frame-fg: var(--layer-b-frame-text);
   --field-bg: var(--layer-b-field);
   --field-fg: var(--layer-b-field-text);
+  --field-fg-muted: var(--layer-b-field-muted);
 }
 
 /* ---------- Marks ---------- */

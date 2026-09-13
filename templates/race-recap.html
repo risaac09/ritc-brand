@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RITC race recap, 1080x1350</title>
+<link rel="stylesheet" href="../brand/tokens.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     EDIT HERE. Copy only. Do not touch the layout below.
+     Anything in {{DOUBLE_BRACES}} is a placeholder for you to fill in.
+     ===================================================================== -->
+<script>
+const POST = {
+  // 'a' = Navy field, white text. 'b' = Baby Ocean Blue field, navy text.
+  // No frame on this template, so this only affects the field itself.
+  layer: 'a',
+
+  eyebrow: '{{RACE_NAME}} • {{DATE}}',
+  headline: '{{RESULT_HEADLINE}}',
+
+  // One row per runner or result. 'tag' is optional (PR, 1ST OVERALL, etc.),
+  // leave it '' to omit. Three or four rows is the practical ceiling before
+  // the block runs out of room.
+  results: [
+    { place: '{{PLACE}}', name: '{{RUNNER_NAME}}', time: '{{TIME}}', tag: '{{TAG}}' },
+  ],
+
+  // One short line. Leave empty to hide it.
+  caption: '{{ONE_LINE_CAPTION}}',
+
+  // Path or URL. Leave empty for a solid field with no photograph.
+  photo: '',
+  photoAlt: '',
+  // 'vertical' keeps the top of the photo clear. 'full' darkens the whole
+  // frame evenly, for a photo where the top also needs to carry text.
+  scrim: 'vertical',
+
+  handle: '@rhodeislandtrackclub',
+};
+</script>
+<!-- ===================== END OF EDITABLE COPY ========================== -->
+
+<div class="ritc-canvas ritc-canvas--portrait" id="canvas">
+  <div class="ritc-field ritc-field--bleed" id="field">
+
+    <div class="ritc-photo" id="photo" hidden>
+      <img id="photoImg" alt="">
+    </div>
+
+    <div class="rr-stars-bar"></div>
+    <div class="rr-stars ritc-star-column" data-ritc-star-column="30"></div>
+
+    <div class="rr-copy">
+      <p class="ritc-eyebrow" id="eyebrow"></p>
+      <h1 class="ritc-display rr-headline" id="headline"></h1>
+
+      <div class="rr-results" id="results"></div>
+
+      <p class="ritc-caption rr-caption" id="caption" hidden></p>
+    </div>
+
+    <div class="rr-footer">
+      <div data-ritc-badge="92"></div>
+      <p class="ritc-caption rr-handle" id="handle"></p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  body { margin: 0; background: var(--preview-bg); }
+
+  /* No frame on this template: the strip rule. Warmups are off, so nothing
+     wraps the field. The star column is the one system marker that stays,
+     since it belongs to the field, not the frame. */
+
+  .rr-stars-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: calc(var(--sp-md) + 30px + var(--sp-sm));
+    background: var(--edge-tint-fade);
+    pointer-events: none;
+  }
+  .rr-stars {
+    position: absolute;
+    left: var(--sp-md);
+    top: var(--sp-md);
+    bottom: var(--sp-md);
+    width: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0.85;
+  }
+
+  .rr-copy {
+    position: absolute;
+    left: calc(var(--sp-md) + 30px + var(--sp-lg));
+    right: var(--sp-lg);
+    bottom: 168px; /* clears the footer row */
+  }
+
+  .rr-headline { margin-top: var(--sp-sm); }
+
+  .rr-results {
+    margin-top: var(--sp-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+  }
+  .rr-result {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    column-gap: var(--sp-md);
+  }
+  .rr-result__place {
+    font-family: var(--font-body);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-data);
+    line-height: var(--lh-data);
+    font-variant-numeric: tabular-nums;
+    min-width: 1.6em;
+  }
+  .rr-result__name-row { display: flex; align-items: baseline; gap: var(--sp-sm); min-width: 0; }
+  .rr-result__name {
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rr-result__tag {
+    flex: none;
+    font-family: var(--font-display);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--tr-caption);
+    text-transform: uppercase;
+    color: var(--text-on-accent);
+    background: var(--ritc-blue);
+    padding: 2px var(--sp-xs);
+    border-radius: var(--radius-sm);
+  }
+  .rr-result__time {
+    font-family: var(--font-body);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-data);
+    line-height: var(--lh-data);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .rr-caption {
+    margin-top: var(--sp-lg);
+    padding-top: var(--sp-sm);
+    border-top: var(--bd-hairline) solid var(--rule-color);
+    color: var(--field-fg-muted);
+  }
+
+  .rr-footer {
+    position: absolute;
+    left: calc(var(--sp-md) + 30px + var(--sp-lg));
+    right: var(--sp-lg);
+    bottom: var(--sp-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+  }
+  .rr-handle { opacity: 0.85; margin: 0; }
+</style>
+
+<script src="../brand/marks.js"></script>
+<script>
+  (function render() {
+    const canvas = document.getElementById('canvas');
+    if (POST.layer === 'b') canvas.classList.add('ritc-layer-b');
+
+    document.getElementById('eyebrow').textContent = POST.eyebrow;
+    document.getElementById('handle').textContent = POST.handle;
+
+    const headlineEl = document.getElementById('headline');
+    headlineEl.textContent = POST.headline;
+
+    const results = document.getElementById('results');
+    POST.results.forEach((r) => {
+      const row = document.createElement('div');
+      row.className = 'rr-result';
+
+      const place = document.createElement('div');
+      place.className = 'rr-result__place';
+      place.textContent = r.place;
+
+      const nameRow = document.createElement('div');
+      nameRow.className = 'rr-result__name-row';
+      const name = document.createElement('span');
+      name.className = 'rr-result__name';
+      name.textContent = r.name;
+      nameRow.appendChild(name);
+      if (r.tag) {
+        const tag = document.createElement('span');
+        tag.className = 'rr-result__tag';
+        tag.textContent = r.tag;
+        nameRow.appendChild(tag);
+      }
+
+      const time = document.createElement('div');
+      time.className = 'rr-result__time';
+      time.textContent = r.time;
+
+      row.append(place, nameRow, time);
+      results.appendChild(row);
+    });
+
+    if (POST.caption) {
+      const caption = document.getElementById('caption');
+      caption.textContent = POST.caption;
+      caption.hidden = false;
+    }
+
+    if (POST.photo) {
+      const slot = document.getElementById('photo');
+      const img = document.getElementById('photoImg');
+      img.src = POST.photo;
+      img.alt = POST.photoAlt || '';
+      slot.hidden = false;
+      if (POST.scrim === 'full') slot.classList.add('ritc-photo--full');
+    }
+
+    ritcAllowBreak(headlineEl);
+    ritcFitText(headlineEl, { maxLines: 2, min: 48 });
+
+    ritcPaintMarks();
+    document.fonts.ready.then(() => document.documentElement.setAttribute('data-ritc-ready', '1'));
+  })();
+</script>
+
+</body>
+</html>

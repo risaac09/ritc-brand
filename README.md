@@ -47,9 +47,11 @@ and `brand/tokens.json`. If a value is missing, add it to both.
 
 ## Status
 
-Brand, tokens, and the export pipeline are complete. One template built
-(workout announcement). The remaining five are pending confirmation of
-direction.
+Brand, tokens, and the export pipeline are complete. Two templates built
+(workout announcement, race recap). Race recap is the no-frame case: it
+validates the strip rule with a full-bleed field, an optional photo with
+scrim, and a results table. Four remain: member spotlight, event promo,
+quote card, story.
 
 Logo files are not yet supplied, so templates render a labeled placeholder.
 See `assets/logo/README.md`.
