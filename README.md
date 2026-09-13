@@ -47,11 +47,11 @@ and `brand/tokens.json`. If a value is missing, add it to both.
 
 ## Status
 
-Brand, tokens, and the export pipeline are complete. Two templates built
-(workout announcement, race recap). Race recap is the no-frame case: it
-validates the strip rule with a full-bleed field, an optional photo with
-scrim, and a results table. Four remain: member spotlight, event promo,
-quote card, story.
+Brand, tokens, and the export pipeline are complete. Three templates built
+(workout announcement, race recap, member spotlight). Member spotlight is
+the hem-band case: sand or ebony collar-and-cuff bands top and bottom, all
+content living in the field between them. Three remain: event promo, quote
+card, story.
 
 Logo files are not yet supplied, so templates render a labeled placeholder.
 See `assets/logo/README.md`.

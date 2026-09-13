@@ -52,7 +52,7 @@
   --text-on-light:       var(--ritc-navy);
   --text-on-accent:      var(--ritc-navy);
 
-  --rule-color: var(--ritc-blue);
+  --rule-color: var(--layer-a-rule);   /* layer-aware, see .ritc-layer-b */
 
   /* ---- Layer structure: the warmups go over the singlet ----
      Sand and Ebony are the OUTER layer, the frame. Baby Ocean Blue, Navy and
@@ -71,6 +71,7 @@
   --layer-a-field:      var(--ritc-navy);
   --layer-a-field-text: var(--ritc-white);
   --layer-a-field-muted: var(--ritc-blue);   /* on navy: 9.40 */
+  --layer-a-rule: var(--ritc-blue);          /* accent rule/glyph on navy: 9.40 */
 
   /* Pair B: Ebony frame, Baby Ocean Blue field. Boundary contrast 9.57. */
   --layer-b-frame:      var(--ritc-ebony);
@@ -78,6 +79,7 @@
   --layer-b-field:      var(--ritc-blue);
   --layer-b-field-text: var(--ritc-navy);
   --layer-b-field-muted: rgba(1, 30, 61, 0.7);   /* navy at 70% over teal: 4.70, measured */
+  --layer-b-rule: var(--layer-b-field-muted);   /* same measured value, reused as the accent rule/glyph on teal */
 
   /* Default layer pair. Templates override by setting these two. */
   --frame-bg:    var(--layer-a-frame);
@@ -240,6 +242,7 @@
   --field-bg: var(--layer-b-field);
   --field-fg: var(--layer-b-field-text);
   --field-fg-muted: var(--layer-b-field-muted);
+  --rule-color: var(--layer-b-rule);
 }
 
 /* ---------- Marks ---------- */
