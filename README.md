@@ -70,6 +70,9 @@ These need a person, not more code:
   from a 1025px raster, and the extracted anchor is clean under about 120px and
   shows artifacts above that. Requested in
   `docs/email-moriah-asset-request.md`.
+- **Art for the pennant**, the navy burgee on the Sand tee. Confirmed an
+  official mark 2026-09-13, but there is no file for it, only an observation
+  from a photograph, so no template uses it.
 
 The badge palette and the maple leaf are **settled**: the badge is not being
 redrawn, the maple leaf is deliberate, and the system carries the mark as it

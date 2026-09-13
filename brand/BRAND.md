@@ -280,8 +280,21 @@ container and no separation needed. The yellow rope does that work.
 
 ### Secondary marks
 
-From the singlet.
+The first four come from the singlet. The pennant comes from the apparel line.
 
+- **The pennant.** A navy burgee tapering to the right, carrying RHODE ISLAND
+  TRACK CLUB in light type, with chevrons at the hoist. It sits on the left
+  chest of the Sand tee. Confirmed as an official mark 2026-09-13.
+
+  Recorded from an athlete portrait rather than from a file, so the description
+  above is limited to what is legible at that size: the silhouette, the two
+  colours, and the copy. The typography, the exact chevron count, and the
+  precise navy are all unconfirmed. **There is no source file for it yet**, so
+  no template uses it. Do not redraw it from the photograph.
+
+  When a file does land, the pennant is the natural mark for a small
+  chest-height lockup, the same job the badge does but wider and quieter. It
+  is not a replacement for the badge.
 - **Solid anchor**, standalone, in `assets/logo/` as navy, white, and teal.
   The quiet mark. Use where the full badge would be too much, or at small
   sizes. The current file is extracted from the badge rather than drawn, and
@@ -441,5 +454,8 @@ Honest accounting of what is not settled.
    2026-08-24, 2026-09-01, and now). Five documents in the RITC Operations
    Package were built on the 2026-09-01 Sand and Ebony palette and are now off
    the primary palette. They are outside this repo and were not changed here.
-5. **Pantone values are unspecified** for every color. If the club orders
+5. **No source file for the pennant.** It was confirmed official on
+   2026-09-13 and recorded from a photograph. Until vector or transparent art
+   exists, it stays out of the templates.
+6. **Pantone values are unspecified** for every color. If the club orders
    anything screen printed rather than sublimated, someone needs to pick them.

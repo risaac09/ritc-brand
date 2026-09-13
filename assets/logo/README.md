@@ -76,7 +76,13 @@ CSS instead of needing a PNG per colour. The PNG variants (`-navy`, `-white`,
 1. **Vector source for the badge**, an AI, EPS, or real SVG. Everything here is
    downstream of a 1025px raster. This is the only badge ask left: the mark
    itself is settled, it just needs to exist as vector.
-2. **The four singlet marks as the designer drew them**: the anchor, the five
+2. **The pennant.** The navy burgee on the left chest of the Sand tee,
+   confirmed official 2026-09-13. There is no file for it here at all, only an
+   observation from a photograph, so no template uses it. Vector or transparent
+   PNG. Whoever holds the apparel artwork is the place to start; it is not one
+   of the singlet marks.
+
+3. **The four singlet marks as the designer drew them**: the anchor, the five
    point star, the star column, and HOPE. The star currently in
    `brand/marks.js` is drawn from geometry rather than from a club file, and
    the anchor here is extracted from the badge rather than drawn, for the
