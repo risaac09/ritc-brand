@@ -1,66 +1,63 @@
 # RITC logo: designer brief
 
-For M. Fox or whoever the club works with on the mark. Written from the actual
-2020 master files, not from a wordmark-from-scratch assumption. Full detail
-and evidence in `assets/logo/README.md` and `brand/BRAND.md` section 3.
+Written from the actual 2020 master files and the 2026 kit, not from a
+wordmark-from-scratch assumption. Evidence and measurements in
+`assets/logo/README.md` and `brand/BRAND.md` section 3.
 
-## What already exists
+## What exists, and what is settled
 
-The club has a working badge. Two 2020 master JPGs, CMYK, 1025x1026,
-originally from an on-running.com account:
+The club has a working badge. Two 2020 master JPGs, CMYK, 1025x1026:
 
 - Circular badge, **bright blue field `#0E5CC6`**, **yellow rope border and
   yellow wordmark `#F5E056`**, white anchor, **maple leaf** at the crown.
 - RHODE ISLAND above TRACK CLUB, condensed caps.
 - A black-and-white master also exists.
 
-This is not a from-scratch logo job. It is a decision plus a redraw.
-
-## The one decision the club needs to make
-
-The badge's blue and yellow are not on the 2026 kit palette (Baby Ocean Blue
+**The badge is not being redrawn** (settled 2026-09-13). It is the club's real
+mark, and the maple leaf is deliberate. The 2026 kit palette (Baby Ocean Blue
 `#A2C9CF`, Deep Navy `#011E3D`, White, plus Sand `#C6B79B` and Ebony `#1C1C1C`
-for the outers). Two paths:
+for the outers) is a different colour system from the badge, and that is simply
+how it is: the graphics system carries the badge as it stands.
 
-1. **Redraw the badge on the 2026 colours.** Field becomes Deep Navy, rope and
-   wordmark become White or Baby Ocean Blue. Brings the mark and the kit into
-   one system.
-2. **Keep the badge as is.** Blue and yellow stay the club's mark regardless of
-   what the kit does. The graphics system already accommodates this: the
-   badge's outermost edge is the yellow rope, which measures 12.5:1 contrast
-   against Deep Navy, so it separates cleanly on every ground in the system as
-   it stands.
+It works on every ground without special handling. The badge's outermost
+element is the yellow rope rather than the blue field, so the boundary that
+governs legibility measures 12.50 against Deep Navy. Verified by rendering on
+Sand, Navy, Baby Ocean Blue and White from 170px down to 48px.
 
-Whichever way this goes, say so explicitly rather than letting a designer
-guess, and also ask about the maple leaf: an anchor is already Rhode Island's
-own emblem, so a maple leaf at the crown reads as inherited from a stock
-template rather than a deliberate choice. Confirm before it goes any further.
+So this is not a redesign job. It is a file-format job.
 
-## What is actually needed from a designer
+## What is actually needed
 
-1. **Vector source for the badge**, in whichever direction the decision above
-   goes. AI, EPS, or a real SVG with organized layers. Every asset in this
-   repo right now is machine-derived from a 1025px raster JPG, which is why
-   the rope's twist is an approximation and not the real geometry.
+1. **Vector source for the badge.** AI, EPS, or a real SVG with organized
+   layers. Every badge asset in this repository is machine-derived from a
+   1025px raster JPG, which is why the rope's twist is an approximation rather
+   than the real geometry. The mark itself is correct and settled; it just
+   needs to exist as vector.
 
-2. **A standalone anchor, drawn, not extracted.** The current one is lifted
-   out of the badge by keying the white shape, and the yellow wordmark sits on
-   top of the anchor in the source, so letters bite real gaps into the shank
-   and flukes. It is clean under about 120px and shows artifacts above that.
-   A drawn anchor has no such ceiling.
+2. **The four singlet marks as drawn**, in vector: the anchor, the five-point
+   star, the star column from the front seam, and HOPE as set. These are the
+   designer's own work on the 2026 kit. Currently the star is plain geometry
+   drawn as a stand-in, and the anchor is extracted out of the badge, where the
+   wordmark crosses it and takes letter-shaped gaps out of the shank and the
+   flukes. That extraction reads cleanly at about 120px and below and shows the
+   damage above it. Requested in `docs/email-moriah-asset-request.md`.
 
-3. **The five-point star and the repeating star column**, if the club has a
-   version from the singlet beyond what a generic star shape approximates.
-   The one in `brand/marks.js` right now is drawn from geometry, not sourced
-   from a club file.
-
-4. **Color variants once the palette decision is made**: full color, white
-   knockout, and single-color, each as PNG (transparent) and SVG.
+3. **Colour variants of the badge**, if convenient: full colour, a white
+   knockout, and a single-colour version, as transparent PNG and SVG. Not
+   urgent, since the full-colour badge already sits on every ground in the
+   system.
 
 ## Delivery
 
-Drop files in `assets/logo/`, following the existing naming (`ritc-badge.svg`,
-`ritc-anchor.svg`, etc. — see that folder's README for the current set) so
-templates pick them up without an edit. Re-run
-`python3 scripts/build-logo-assets.py` if a new master JPG replaces the 2020
-ones, so the derived PNG sizes and traces regenerate from it.
+Drop files in `assets/logo/`, following the existing naming
+(`ritc-badge.svg`, `ritc-anchor.svg`, and so on; that folder's README lists the
+current set) so templates pick them up without an edit. If a better badge
+master replaces the 2020 JPGs, drop it in `assets/logo/_source/` and re-run
+`python3 scripts/build-logo-assets.py` to regenerate the derived sizes and
+traces from it.
+
+## Still open, and not the designer's call
+
+CMYK values for Sand and Ebony. Those two are screen-sampled from a colourway
+sheet rather than read from a print file, so they should not go to a printer as
+they stand. That is a committee question.

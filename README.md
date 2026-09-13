@@ -65,13 +65,15 @@ the same files the export script uses.
 
 These need a person, not more code:
 
-- **A decision on the badge palette.** The 2020 badge is bright blue and
-  yellow; the 2026 kit is navy and teal. Both work as they stand, but they are
-  two colour systems. `docs/LOGO-DESIGN-BRIEF.md` states the choice.
-- **Vector source for the badge, and a drawn standalone anchor.** Everything in
-  `assets/logo/` is derived from a 1025px raster. The extracted anchor is clean
-  under about 120px and shows artifacts above that.
-- **Confirmation on the maple leaf** at the badge's crown.
+- **Vector source for the badge, and the four singlet marks as drawn** (anchor,
+  five-point star, star column, HOPE). Everything in `assets/logo/` is derived
+  from a 1025px raster, and the extracted anchor is clean under about 120px and
+  shows artifacts above that. Requested in
+  `docs/email-moriah-asset-request.md`.
+
+The badge palette and the maple leaf are **settled**: the badge is not being
+redrawn, the maple leaf is deliberate, and the system carries the mark as it
+is.
 - **A real race photo** to check the scrim against. The templates have only
   been tested against a synthetic stand-in.
 - **CMYK values for Sand and Ebony**, which are screen-sampled rather than read

@@ -247,16 +247,22 @@ here said navy field, white rope, white anchor, and an RI-style emblem at the
 crown. All three colour claims and the emblem were wrong. The masters are 2020
 CMYK JPEGs and predate the 2026 kit refresh.
 
-**The badge is on a different colour system than the 2026 singlet.** Bright
-blue and yellow are not in the primary palette and not in the secondary one.
-This is unresolved and it is the club's decision, not this document's: either
-the badge gets redrawn on the 2026 colours, or the graphics system carries a
-blue and yellow badge on navy and teal layouts. See `assets/logo/README.md`.
+The maple leaf is deliberate. An earlier version of this document guessed it
+might be inherited from a stock template, which was speculation and was wrong.
+It is the club's mark as drawn.
 
-It does work on every ground in this system as it stands. The badge's outermost
+**The badge is on a different colour system than the 2026 singlet, and it
+stays that way.** Bright blue and yellow are not in the primary palette and not
+in the secondary one. Settled 2026-09-13: the badge is not being redrawn. It is
+the club's real mark, maple leaf and all, and the graphics system carries it as
+it is.
+
+That works, and it was verified rather than assumed. The badge's outermost
 element is the yellow rope, not the blue field, so the boundary that matters
-measures 12.50 against Deep Navy. Verified by rendering on all four grounds at
-sizes from 170px down to 48px.
+measures 12.50 against Deep Navy. Rendered on Sand, Navy, Baby Ocean Blue and
+White at sizes from 170px down to 48px, it separates cleanly on all of them.
+The badge needs no container and no special treatment on any ground in this
+system.
 
 **Clear space.** 25 percent of the badge diameter, on all four sides. At a 200px
 badge that is 50px of nothing. No type, no photo edge, no other mark inside it.
@@ -435,9 +441,5 @@ Honest accounting of what is not settled.
    2026-08-24, 2026-09-01, and now). Five documents in the RITC Operations
    Package were built on the 2026-09-01 Sand and Ebony palette and are now off
    the primary palette. They are outside this repo and were not changed here.
-5. **The badge carries a maple leaf** at the anchor's crown. Rhode Island's own
-   emblem is an anchor, so this is an odd pairing and may be inherited from a
-   stock template. Worth confirming with the club before the mark is reused
-   further.
-6. **Pantone values are unspecified** for every color. If the club orders
+5. **Pantone values are unspecified** for every color. If the club orders
    anything screen printed rather than sublimated, someone needs to pick them.

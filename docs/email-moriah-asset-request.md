@@ -1,8 +1,9 @@
 Draft. Not sent. Isaac to review and send.
 
 Scope note: this asks Moriah only for the four secondary marks she drew for
-the 2026 singlet. The circular badge, the badge palette question, the maple
-leaf, and CMYK for Sand and Ebony are committee asks, not hers.
+the 2026 singlet. The badge is settled and is not being redrawn, and the maple
+leaf is deliberate, so neither is a question for anyone. Vector source for the
+badge and CMYK for Sand and Ebony are committee asks, not hers.
 
 Subject: RITC singlet artwork, one small file ask
 

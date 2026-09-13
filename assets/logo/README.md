@@ -17,9 +17,7 @@ Regenerate everything with:
 python3 scripts/build-logo-assets.py
 ```
 
-## The badge is not on the 2026 palette
-
-This is the thing to decide before the graphics system ships.
+## The badge is not on the 2026 palette, and it stays that way
 
 | Element | Actual master | 2026 kit palette |
 |---|---|---|
@@ -27,14 +25,12 @@ This is the thing to decide before the graphics system ships.
 | Rope and wordmark | `#F5E056` yellow | not in the palette |
 | Anchor | `#FFFFFF` white | White |
 
-The 2020 badge and the 2026 singlet are two different colour systems. The
-badge also carries a **maple leaf** at the anchor's crown, which is worth
-raising with the club given that Rhode Island's emblem is an anchor and a
-fouled anchor with a maple leaf is an unusual combination. It may be inherited
-from a stock template.
+The 2020 badge and the 2026 singlet are two different colour systems. Settled
+2026-09-13: the badge is not being redrawn. It is the club's real mark, and the
+maple leaf at the anchor's crown is deliberate, not a stock-template artifact.
+An earlier version of this file guessed otherwise; that guess was wrong.
 
-Nothing here recolours the badge. Recolouring a club's primary mark is the
-designer's call, not this repository's.
+Nothing here recolours the badge, and nothing should.
 
 **It still works on every ground in the system.** The badge's outermost element
 is the yellow rope, not the blue field, so the boundary that matters measures
@@ -78,16 +74,13 @@ CSS instead of needing a PNG per colour. The PNG variants (`-navy`, `-white`,
 ## Still needed from the designer
 
 1. **Vector source for the badge**, an AI, EPS, or real SVG. Everything here is
-   downstream of a 1025px raster.
-2. **A real standalone anchor**, drawn rather than extracted, for the reasons
-   above.
-3. **A decision on the palette conflict**: does the badge get redrawn on the
-   2026 colours, or does the graphics system carry a blue and yellow badge on
-   navy and teal layouts?
-4. **The five point star and the HOPE wordmark** as the club draws them. The
-   star currently in `brand/marks.js` is drawn from geometry, not from a club
-   file, so it is a stand-in.
-5. **Confirmation on the maple leaf.**
+   downstream of a 1025px raster. This is the only badge ask left: the mark
+   itself is settled, it just needs to exist as vector.
+2. **The four singlet marks as the designer drew them**: the anchor, the five
+   point star, the star column, and HOPE. The star currently in
+   `brand/marks.js` is drawn from geometry rather than from a club file, and
+   the anchor here is extracted from the badge rather than drawn, for the
+   reasons above. Requested in `docs/email-moriah-asset-request.md`.
 
 ## A note on the tooling
 
