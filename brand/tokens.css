@@ -42,15 +42,14 @@
   --ritc-sand:  #C6B79B;
   --ritc-ebony: #1C1C1C;
 
-  /* ---- Semantic roles. Templates use these, not the raw names above. ---- */
-  --ground-primary: var(--ritc-navy);
-  --ground-light:   var(--ritc-white);
-  --ground-accent:  var(--ritc-blue);
+  /* ---- Semantic roles. Templates use these, not the raw names above. ----
 
-  --text-on-dark:        var(--ritc-white);
-  --text-on-dark-muted:  var(--ritc-blue);
-  --text-on-light:       var(--ritc-navy);
-  --text-on-accent:      var(--ritc-navy);
+     Every role that depends on which ground it sits on is defined once per
+     layer below (--layer-a-*, --layer-b-*) and selected by the active layer,
+     never as a single constant. A constant here is a bug waiting to happen:
+     three separate invisible-element bugs came from tokens that resolved to
+     Baby Ocean Blue regardless of layer, on a layer whose field IS Baby
+     Ocean Blue. If you add a color role, add it to both layers. */
 
   --rule-color: var(--layer-a-rule);   /* layer-aware, see .ritc-layer-b */
 
@@ -72,6 +71,8 @@
   --layer-a-field-text: var(--ritc-white);
   --layer-a-field-muted: var(--ritc-blue);   /* on navy: 9.40 */
   --layer-a-rule: var(--ritc-blue);          /* accent rule/glyph on navy: 9.40 */
+  --layer-a-accent:      var(--ritc-blue);   /* accent fill on navy field: 9.40 */
+  --layer-a-accent-text: var(--ritc-navy);   /* text on that fill: 9.40 */
 
   /* Pair B: Ebony frame, Baby Ocean Blue field. Boundary contrast 9.57. */
   --layer-b-frame:      var(--ritc-ebony);
@@ -80,6 +81,8 @@
   --layer-b-field-text: var(--ritc-navy);
   --layer-b-field-muted: rgba(1, 30, 61, 0.7);   /* navy at 70% over teal: 4.70, measured */
   --layer-b-rule: var(--layer-b-field-muted);   /* same measured value, reused as the accent rule/glyph on teal */
+  --layer-b-accent:      var(--ritc-navy);    /* accent fill on teal field: 9.40 */
+  --layer-b-accent-text: var(--ritc-white);   /* text on that fill: 16.74 */
 
   /* Default layer pair. Templates override by setting these two. */
   --frame-bg:    var(--layer-a-frame);
@@ -87,6 +90,8 @@
   --field-bg:    var(--layer-a-field);
   --field-fg:    var(--layer-a-field-text);
   --field-fg-muted: var(--layer-a-field-muted);
+  --accent-bg:      var(--layer-a-accent);
+  --accent-fg:      var(--layer-a-accent-text);
 
   /* Photo scrim. Navy at zero alpha to navy at 88%, so white type stays legible
      over any photograph. Every photo slot gets one. */
@@ -159,8 +164,10 @@
   width: var(--canvas-w);
   position: relative;
   overflow: hidden;
-  background: var(--ground-primary);
-  color: var(--text-on-dark);
+  /* Layer-aware, so content placed directly on the canvas rather than
+     inside a .ritc-field still gets the active layer's colors. */
+  background: var(--field-bg);
+  color: var(--field-fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -243,6 +250,8 @@
   --field-fg: var(--layer-b-field-text);
   --field-fg-muted: var(--layer-b-field-muted);
   --rule-color: var(--layer-b-rule);
+  --accent-bg: var(--layer-b-accent);
+  --accent-fg: var(--layer-b-accent-text);
 }
 
 /* ---------- Marks ---------- */

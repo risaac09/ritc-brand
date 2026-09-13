@@ -381,6 +381,28 @@ Community first, local, not corporate-slick.
   outside CSS.
 - If a value is missing, add it to both files. Do not work around it locally.
 
+### The rule for adding a color
+
+Any color role that depends on which ground it sits on must be defined once
+per layer, as `--layer-a-*` and `--layer-b-*`, and selected by the active
+layer. Never as a single constant.
+
+This is not a style preference. Three separate bugs came from breaking it, all
+the same shape: a token resolved to Baby Ocean Blue no matter which layer was
+active, and on layer B the field itself is Baby Ocean Blue, so the element
+painted itself its own background color and disappeared. It hit the eyebrow
+text, then the divider rule and the quote mark, then the accent pill. Each
+time it was invisible on layer B and fine on layer A, so it survived every
+check that only looked at the default.
+
+The roles currently defined per layer: frame, frame text, field, field text,
+field muted text, rule, accent fill, accent text. If you add a ninth, add it
+to both layers and measure both before using it.
+
+The one deliberate exception is the photo scrim, which is always navy
+regardless of layer, because it exists to darken a photograph rather than to
+sit on a field.
+
 ---
 
 ## 8. Named gaps
