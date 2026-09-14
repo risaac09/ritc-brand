@@ -1,0 +1,27 @@
+{
+  "name": "ritc-brand",
+  "version": "1.0.0",
+  "description": "Rhode Island Track Club internal repository for brand, graphics and social media.",
+  "scripts": {
+    "export": "node scripts/export.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/risaac09/ritc-brand.git"
+  },
+  "keywords": [
+    "ritc",
+    "brand",
+    "instagram"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/risaac09/ritc-brand/issues"
+  },
+  "homepage": "https://github.com/risaac09/ritc-brand#readme",
+  "dependencies": {
+    "playwright": "^1.63.0"
+  },
+  "private": true
+}

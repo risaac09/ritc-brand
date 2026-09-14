@@ -1,0 +1,306 @@
+/* Rhode Island Track Club brand tokens
+   Single source of truth for every template in this repo.
+   Version 1.0.0, updated 2026-09-12.
+
+   HEX IS DIGITAL ONLY. Never sample a hex value from this file and convert it
+   to CMYK for a print job. The print values live in brand/tokens.json under
+   color.primary.*.cmyk and are reproduced in the comments below.
+
+   No template may hardcode a color, a font stack, or a type size. Import this
+   file and use the variables. If a value you need is missing, add it here. */
+
+/* Fonts are vendored in assets/fonts/ rather than fetched from Google at
+   render time. Two reasons: an export must not silently fall back to Arial
+   when the network is unavailable, and a headless browser often does not
+   share the shell's proxy. Latin variable subsets, 56KB for both.
+   Paths are relative to this file, so a template in templates/ resolves
+   them correctly through the stylesheet. */
+
+@font-face {
+  font-family: 'Oswald';
+  src: url('../assets/fonts/oswald-latin-var.woff2') format('woff2-variations');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('../assets/fonts/archivo-latin-var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  /* ---- Primary palette (verified against the print-ready singlet file) ---- */
+  --ritc-blue:  #A2C9CF;  /* Baby Ocean Blue. Print CMYK 36 / 9 / 16 / 0 */
+  --ritc-navy:  #011E3D;  /* Deep Navy. Print CMYK 99.6 / 83.8 / 39.2 / 57 */
+  --ritc-white: #FFFFFF;  /* Print CMYK 0 / 0 / 0 / 0 */
+
+  /* ---- Secondary palette (outers and warmups; screen-sampled, CMYK unverified) ---- */
+  --ritc-sand:  #C6B79B;
+  --ritc-ebony: #1C1C1C;
+
+  /* ---- Semantic roles. Templates use these, not the raw names above. ----
+
+     Every role that depends on which ground it sits on is defined once per
+     layer below (--layer-a-*, --layer-b-*) and selected by the active layer,
+     never as a single constant. A constant here is a bug waiting to happen:
+     three separate invisible-element bugs came from tokens that resolved to
+     Baby Ocean Blue regardless of layer, on a layer whose field IS Baby
+     Ocean Blue. If you add a color role, add it to both layers. */
+
+  --rule-color: var(--layer-a-rule);   /* layer-aware, see .ritc-layer-b */
+
+  /* ---- Layer structure: the warmups go over the singlet ----
+     Sand and Ebony are the OUTER layer, the frame. Baby Ocean Blue, Navy and
+     White are the INNER layer, the field. Only two pairings separate at the
+     boundary: warm outer takes the dark inner, dark outer takes the light
+     inner. Use a --layer-* pair together. Do not mix across pairs. */
+
+  --frame-band: 56px;   /* frame thickness on the top and sides */
+  --frame-waist: 200px; /* the deep bottom band. A jacket's waistband, and the
+                           only part of the frame wide enough to hold the
+                           badge, which belongs to the outer layer. */
+
+  /* Pair A: Sand frame, Navy field. Boundary contrast 8.49. */
+  --layer-a-frame:      var(--ritc-sand);
+  --layer-a-frame-text: var(--ritc-ebony);
+  --layer-a-field:      var(--ritc-navy);
+  --layer-a-field-text: var(--ritc-white);
+  --layer-a-field-muted: var(--ritc-blue);   /* on navy: 9.40 */
+  --layer-a-rule: var(--ritc-blue);          /* accent rule/glyph on navy: 9.40 */
+  --layer-a-accent:      var(--ritc-blue);   /* accent fill on navy field: 9.40 */
+  --layer-a-accent-text: var(--ritc-navy);   /* text on that fill: 9.40 */
+
+  /* Pair B: Ebony frame, Baby Ocean Blue field. Boundary contrast 9.57. */
+  --layer-b-frame:      var(--ritc-ebony);
+  --layer-b-frame-text: var(--ritc-sand);
+  --layer-b-field:      var(--ritc-blue);
+  --layer-b-field-text: var(--ritc-navy);
+  --layer-b-field-muted: rgba(1, 30, 61, 0.7);   /* navy at 70% over teal: 4.70, measured */
+  --layer-b-rule: var(--layer-b-field-muted);   /* same measured value, reused as the accent rule/glyph on teal */
+  --layer-b-accent:      var(--ritc-navy);    /* accent fill on teal field: 9.40 */
+  --layer-b-accent-text: var(--ritc-white);   /* text on that fill: 16.74 */
+
+  /* Default layer pair. Templates override by setting these two. */
+  --frame-bg:    var(--layer-a-frame);
+  --frame-fg:    var(--layer-a-frame-text);
+  --field-bg:    var(--layer-a-field);
+  --field-fg:    var(--layer-a-field-text);
+  --field-fg-muted: var(--layer-a-field-muted);
+  --accent-bg:      var(--layer-a-accent);
+  --accent-fg:      var(--layer-a-accent-text);
+
+  /* Photo scrim. Navy at zero alpha to navy at 88%, so white type stays legible
+     over any photograph. Every photo slot gets one. */
+  --scrim-from: rgba(1, 30, 61, 0);
+  --scrim-mid:  rgba(1, 30, 61, 0.45);
+  --scrim-to:   rgba(1, 30, 61, 0.88);
+  --scrim-vertical: linear-gradient(180deg, var(--scrim-from) 0%, var(--scrim-mid) 55%, var(--scrim-to) 100%);
+  --scrim-full:     linear-gradient(180deg, rgba(1,30,61,0.55) 0%, rgba(1,30,61,0.75) 100%);
+
+  /* Subtle edge tint behind an inner-layer element (the star column) when it
+     sits directly over a photograph on an unframed canvas, so it stays legible
+     without a full scrim. Same navy as the scrim family, lower opacity. */
+  --edge-tint: rgba(1, 30, 61, 0.35);
+  --edge-tint-fade: linear-gradient(90deg, var(--edge-tint) 0%, rgba(1, 30, 61, 0) 100%);
+
+  /* ---- Type families ---- */
+  --font-display: 'Oswald', 'Arial Narrow', 'Helvetica Neue Condensed', sans-serif;
+  --font-body:    'Archivo', 'Helvetica Neue', Arial, sans-serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ---- Type scale. Px on the 1x canvas (1080 wide). Export renders at 2x. ---- */
+  --fs-display: 96px;   --lh-display: 0.92;  --tr-display: -0.01em;
+  --fs-h1: 72px;        --lh-h1: 0.95;       --tr-h1: -0.005em;
+  --fs-h2: 54px;        --lh-h2: 1;
+  --fs-h3: 40px;        --lh-h3: 1.1;
+  --fs-eyebrow: 20px;   --lh-eyebrow: 1.2;   --tr-eyebrow: 0.18em;
+  --fs-body-lg: 32px;   --lh-body-lg: 1.35;
+  --fs-body: 26px;      --lh-body: 1.45;
+  --fs-caption: 21px;   --lh-caption: 1.4;   --tr-caption: 0.02em;
+  --fs-data: 44px;      --lh-data: 1;
+
+  /* ---- Spacing ---- */
+  --sp-xs: 12px;
+  --sp-sm: 20px;
+  --sp-md: 32px;
+  --sp-lg: 56px;
+  --sp-xl: 88px;
+  --margin: 72px;   /* the outer safe margin on every 1080-wide canvas */
+
+  /* ---- Canvas ---- */
+  --canvas-w: 1080px;
+  --canvas-portrait-h: 1350px;
+  --canvas-square-h: 1080px;
+  --canvas-story-h: 1920px;
+  --story-safe-top: 250px;
+  --story-safe-bottom: 320px;
+
+  /* ---- Logo ---- */
+  --logo-clear-ratio: 0.25;
+  --logo-min-digital: 96px;
+
+  /* ---- Lines ---- */
+  --bd-hairline: 2px;
+  --bd-rule: 4px;
+  --bd-heavy: 8px;
+  --radius-sm: 4px;
+  --radius-pill: 999px;
+
+  /* Preview chrome only. Never appears inside a canvas. */
+  --preview-bg: #6B7280;
+}
+
+/* ---------- Shared primitives every template may use ---------- */
+
+.ritc-canvas {
+  width: var(--canvas-w);
+  position: relative;
+  overflow: hidden;
+  /* Layer-aware, so content placed directly on the canvas rather than
+     inside a .ritc-field still gets the active layer's colors. */
+  background: var(--field-bg);
+  color: var(--field-fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+.ritc-canvas--portrait { height: var(--canvas-portrait-h); }
+.ritc-canvas--square   { height: var(--canvas-square-h); }
+.ritc-canvas--story    { height: var(--canvas-story-h); }
+
+.ritc-display { font-family: var(--font-display); font-weight: var(--fw-semibold); font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tr-display); text-transform: uppercase; margin: 0; }
+.ritc-h1      { font-family: var(--font-display); font-weight: var(--fw-semibold); font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tr-h1); text-transform: uppercase; margin: 0; }
+.ritc-h2      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h2); line-height: var(--lh-h2); text-transform: uppercase; margin: 0; }
+.ritc-h3      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h3); line-height: var(--lh-h3); text-transform: uppercase; margin: 0; }
+.ritc-eyebrow { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-eyebrow); line-height: var(--lh-eyebrow); letter-spacing: var(--tr-eyebrow); text-transform: uppercase; margin: 0; color: var(--field-fg-muted); }
+.ritc-body-lg { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); margin: 0; }
+.ritc-body    { font-size: var(--fs-body); line-height: var(--lh-body); margin: 0; }
+.ritc-caption { font-size: var(--fs-caption); line-height: var(--lh-caption); letter-spacing: var(--tr-caption); font-weight: var(--fw-medium); margin: 0; }
+.ritc-data    { font-size: var(--fs-data); line-height: var(--lh-data); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; margin: 0; }
+
+/* Photo slot. Cover crop plus the navy scrim, always. */
+.ritc-photo { position: absolute; inset: 0; overflow: hidden; }
+.ritc-photo > img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.ritc-photo::after { content: ''; position: absolute; inset: 0; background: var(--scrim-vertical); pointer-events: none; }
+.ritc-photo--full::after { background: var(--scrim-full); }
+
+/* The star column from the singlet, used as a vertical stripe motif. */
+/* The star column's color follows the same layer-aware muted token as
+   .ritc-eyebrow. Both templates compose this with their own positioning
+   class rather than duplicating the color rule locally. */
+.ritc-star-column { display: flex; flex-direction: column; align-items: center; gap: var(--sp-sm); color: var(--field-fg-muted); }
+
+.ritc-rule { border: 0; height: var(--bd-rule); background: var(--rule-color); width: 100%; margin: 0; }
+
+/* ---------- Layer primitives ----------
+   A framed canvas is .ritc-canvas > .ritc-frame > .ritc-field.
+   An unframed one (race day) skips the frame and lets .ritc-field bleed. */
+
+.ritc-frame {
+  position: absolute;
+  inset: 0;
+  background: var(--frame-bg);
+  color: var(--frame-fg);
+}
+
+/* Full frame: warm band on all four sides, deeper at the bottom. */
+.ritc-frame--full > .ritc-field {
+  inset: var(--frame-band) var(--frame-band) var(--frame-waist) var(--frame-band);
+}
+
+/* The waistband itself, where the badge and the handle live. */
+.ritc-waist {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: var(--frame-waist);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding: 0 var(--frame-band);
+  box-sizing: border-box;
+  color: var(--frame-fg);
+}
+
+/* Hem bands: collar and cuff. Left and right bleed. */
+.ritc-frame--hem > .ritc-field { inset: var(--frame-band) 0; }
+
+.ritc-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--field-bg);
+  color: var(--field-fg);
+}
+
+/* Race day. No frame, field bleeds to every edge. */
+.ritc-field--bleed { inset: 0; }
+
+/* A photograph brings its own ground.
+
+   The scrim is always navy, deliberately, because its job is to darken a
+   photograph rather than to sit on a field. That means anything laid over a
+   photo is on a navy ground no matter which layer the template selected. On
+   layer B, whose field text is navy, that produced navy text on a navy
+   scrim: legible only by accident and well under AA.
+
+   So when a photo is present, the foreground roles revert to the on-navy
+   set. Only the foregrounds: --field-bg is left alone, since the photo
+   covers it anyway, and the frame bands sit outside the photo and keep
+   their own layer colors. */
+.ritc-on-photo {
+  --field-fg:       var(--layer-a-field-text);
+  --field-fg-muted: var(--layer-a-field-muted);
+  --rule-color:     var(--layer-a-rule);
+  --accent-bg:      var(--layer-a-accent);
+  --accent-fg:      var(--layer-a-accent-text);
+}
+
+/* Opt in to the Ebony-over-teal pair on any canvas. */
+.ritc-layer-b {
+  --frame-bg: var(--layer-b-frame);
+  --frame-fg: var(--layer-b-frame-text);
+  --field-bg: var(--layer-b-field);
+  --field-fg: var(--layer-b-field-text);
+  --field-fg-muted: var(--layer-b-field-muted);
+  --rule-color: var(--layer-b-rule);
+  --accent-bg: var(--layer-b-accent);
+  --accent-fg: var(--layer-b-accent-text);
+}
+
+/* ---------- Marks ---------- */
+
+/* A template opened directly has no host reset, so [hidden] needs teeth
+   against the display rules below. */
+[hidden] { display: none !important; }
+
+.ritc-badge { position: relative; flex: none; }
+.ritc-badge > img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* Obvious on purpose. Nothing should ship with this visible. */
+.ritc-badge__placeholder {
+  position: absolute;
+  inset: 0;
+  border: var(--bd-rule) dashed currentColor;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+  opacity: 0.75;
+}
+.ritc-badge__note { font-family: var(--font-body); font-size: 11px; letter-spacing: 0; opacity: 0.8; }
