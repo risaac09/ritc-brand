@@ -1,0 +1,19 @@
+{
+  "_read_me": [
+    "This is an example, not a live registration. Resolve Studio 21.1 registers its own MCP server through File > Setup AI Assistants, and that dialog is the authority on the command, transport, and server name.",
+    "After running it once on the M4 Max, copy the block it wrote (Claude Code keeps user-scope servers in ~/.claude.json) into a real .mcp.json at the repo root so the repo carries the wiring, then delete this file.",
+    "Prerequisite inside Resolve: Preferences > System > General > External scripting = Local. Without it the server starts and every call fails silently.",
+    "The community bridge (npx davinci-resolve-mcp setup, MIT, Samuel Gursky) is a fallback if the native dialog does not offer Claude Code on this build. Do not run both; two servers on one Resolve instance race on the scripting socket."
+  ],
+  "mcpServers": {
+    "davinci-resolve": {
+      "_note": "Shape only. Replace command and args with what Setup AI Assistants writes. If it registers an HTTP or SSE endpoint instead, the block becomes {\"type\": \"http\", \"url\": \"...\"}.",
+      "command": "REPLACE_WITH_WHAT_RESOLVE_WROTE",
+      "args": [],
+      "env": {
+        "RESOLVE_SCRIPT_API": "/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting",
+        "RESOLVE_SCRIPT_LIB": "/Applications/DaVinci Resolve/DaVinci Resolve.app/Contents/Libraries/Fusion/fusionscript.so"
+      }
+    }
+  }
+}
