@@ -1,0 +1,72 @@
+{
+  "$meta": {
+    "name": "RITC Resolve config",
+    "version": "0.1.0",
+    "updated": "2026-09-14",
+    "consumers": [
+      "rubinstein-productions-toolkit/production/resolve_workflow.py --config video/resolve-config.json",
+      "the Resolve MCP session, which reads this file and applies it through set_project_setting, create_bin, and set_render_settings"
+    ],
+    "source": "Canvas sizes and safe zones from brand/tokens.json. Camera list from the toolkit template; which bodies actually cover RITC is unconfirmed, see video/README.md named gaps."
+  },
+  "project_name_pattern": "RITC-{date}-{slug}",
+  "bins": {
+    "Source": ["Phone", "GH7", "GH5", "BMPCC", "Audio"],
+    "Selects": [],
+    "Timeline": [],
+    "Graphics": ["Cards", "Logo"],
+    "Exports": []
+  },
+  "cameras": {
+    "phone":  { "bin": ["Source", "Phone"],  "clip_color": "Blue" },
+    "gh7":    { "bin": ["Source", "GH7"],    "clip_color": "Orange" },
+    "gh5":    { "bin": ["Source", "GH5"],    "clip_color": "Yellow" },
+    "bmpcc":  { "bin": ["Source", "BMPCC"],  "clip_color": "Green" }
+  },
+  "default_resolution": { "width": 1080, "height": 1920 },
+  "default_framerate": "29.97",
+  "framerate_note": "Instagram serves 30fps; 29.97 or 30 avoids a pulldown. Set 23.976 only when every source is 23.976 and the post is a film-style piece, not a workout clip.",
+  "color_science_mode": "davinciYRGBColorManagedv2",
+  "graphics": {
+    "title_card": "templates/story.html exported at 2x, 2160x3840, imported to Graphics/Cards",
+    "end_card": "templates/story.html with cta set and photo empty, exported at 2x, imported to Graphics/Cards",
+    "badge": "assets/logo/ritc-badge-512.png, imported to Graphics/Logo, placed bottom-left or bottom-right at 96px minimum on the 1080 canvas, 25 percent clear space"
+  },
+  "render_presets": {
+    "reel": {
+      "name": "RITC Reel 9x16",
+      "resolution": { "width": 1080, "height": 1920 },
+      "format": "mp4",
+      "codec": "H264",
+      "codec_fallbacks": ["H.264", "AVC"],
+      "suffix": "_reel",
+      "note": "Canvas only. Reframe per clip before rendering vertical; the preset does not follow subjects."
+    },
+    "feed": {
+      "name": "RITC Feed 4x5",
+      "resolution": { "width": 1080, "height": 1350 },
+      "format": "mp4",
+      "codec": "H264",
+      "codec_fallbacks": ["H.264", "AVC"],
+      "suffix": "_feed"
+    },
+    "square": {
+      "name": "RITC Square 1x1",
+      "resolution": { "width": 1080, "height": 1080 },
+      "format": "mp4",
+      "codec": "H264",
+      "codec_fallbacks": ["H.264", "AVC"],
+      "suffix": "_square"
+    },
+    "master": {
+      "name": "RITC Master ProRes",
+      "resolution": { "width": 1080, "height": 1920 },
+      "format": "mov",
+      "codec": "ProRes422HQ",
+      "codec_fallbacks": ["Apple ProRes 422 HQ"],
+      "suffix": "_master",
+      "note": "Archive copy of the vertical cut. Goes to the video archive, not to Instagram and not to the repo."
+    }
+  },
+  "output_dir": "exports/video"
+}
