@@ -82,6 +82,11 @@ for (const file of files) {
     const placeholders = await page.locator('.ritc-badge__placeholder:not([hidden])').count();
     if (placeholders) problems.push(`${placeholders} logo placeholder(s) still visible`);
 
+    // A template that could not fit its content at the readable floor says so
+    // on the root element. Without this check a clipped graphic exports as ok.
+    const overflow = await page.evaluate(() => document.documentElement.dataset.ritcOverflow || '');
+    if (overflow) problems.push(`content overflows the field (${overflow}) at the 21px floor`);
+
     const px = `${Math.round(box.width * scale)}x${Math.round(box.height * scale)}`;
     console.log(`  ${name.padEnd(26)} ${px.padEnd(11)} ${problems.length ? 'WARN ' + problems.join('; ') : 'ok'}`);
     if (problems.length) failed += 1;

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RITC race roster, 1080x1350</title>
+<link rel="stylesheet" href="../brand/tokens.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     EDIT HERE. Copy only. Do not touch the layout below.
+     Anything in {{DOUBLE_BRACES}} is a placeholder for you to fill in.
+
+     This is the weekly "who is racing this weekend" post. One group per
+     race, one runner per line. Names never wrap mid-name, which is why
+     this exists instead of a comma list in the event promo.
+     ===================================================================== -->
+<script>
+const POST = {
+  // 'a' = Sand frame over Navy field. 'b' = Ebony frame over Baby Ocean Blue.
+  layer: 'a',
+
+  eyebrow: '{{DATE}}',
+  title: 'Racing this weekend',
+
+  // One group per race. Names are FULL first and last, one per line.
+  // Credit by name only with permission, per BRAND.md section 6.
+  // Keep it to three groups; past that the names go below the readable floor.
+  races: [
+    {
+      name: '{{RACE_NAME}}',
+      place: '',                 // optional, e.g. 'Gloucester, MA'. Empty hides it.
+      runners: ['{{RUNNER}}', '{{RUNNER}}'],
+    },
+  ],
+
+  // Optional closing line. Leave empty to hide it.
+  footer: '',
+
+  handle: '@rhodeislandtrackclub',
+};
+</script>
+<!-- ===================== END OF EDITABLE COPY ========================== -->
+
+<div class="ritc-canvas ritc-canvas--portrait" id="canvas">
+  <div class="ritc-frame ritc-frame--full">
+
+    <div class="ritc-field">
+
+      <div class="rr-stars-bar"></div>
+      <div class="rr-stars ritc-star-column" data-ritc-star-column="30"></div>
+
+      <div class="rr-copy">
+        <p class="ritc-eyebrow" id="eyebrow"></p>
+        <h1 class="ritc-display rr-title" id="title"></h1>
+        <div class="rr-races" id="races"></div>
+        <p class="rr-footer" id="footer" hidden></p>
+      </div>
+    </div>
+
+    <div class="ritc-waist">
+      <div data-ritc-badge="136"></div>
+      <div class="rr-waist-text">
+        <p class="ritc-h3 rr-clubname">Rhode Island<br>Track Club</p>
+        <p class="ritc-caption rr-handle" id="handle"></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  body { margin: 0; background: var(--preview-bg); }
+
+  .rr-stars-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: calc(var(--sp-md) + 30px + var(--sp-sm));
+    background: var(--edge-tint-fade);
+    pointer-events: none;
+  }
+  .rr-stars {
+    position: absolute;
+    left: var(--sp-md);
+    top: var(--sp-md);
+    bottom: var(--sp-md);
+    width: 30px;
+    justify-content: space-between;
+    opacity: 0.85;
+  }
+
+  /* Anchored to the top rather than the bottom. A roster grows downward as
+     more people race, so the title has to hold still. */
+  .rr-copy {
+    position: absolute;
+    left: calc(var(--sp-md) + 30px + var(--sp-lg));
+    right: var(--sp-lg);
+    top: var(--sp-lg);
+    bottom: var(--sp-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rr-title { margin-top: var(--sp-sm); }
+
+  .rr-races {
+    margin-top: var(--sp-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-md);
+  }
+
+  .rr-race-name {
+    margin: 0 0 var(--sp-xs);
+    color: var(--field-fg-muted);
+  }
+
+  .rr-runners { margin: 0; padding: 0; list-style: none; }
+
+  /* One runner per line. No wrapping inside a name: a person's name broken
+     across two lines reads as two people. */
+  .rr-runners li {
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+    white-space: nowrap;
+  }
+
+  .rr-footer {
+    margin: auto 0 0;
+    padding-top: var(--sp-md);
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+    color: var(--field-fg-muted);
+  }
+
+  .rr-waist-text { display: flex; flex-direction: column; gap: 4px; }
+  .rr-clubname { letter-spacing: 0.01em; }
+  .rr-handle { opacity: 0.75; }
+</style>
+
+<script src="../brand/marks.js"></script>
+<script>
+  (function render() {
+    const canvas = document.getElementById('canvas');
+    if (POST.layer === 'b') canvas.classList.add('ritc-layer-b');
+
+    document.getElementById('eyebrow').textContent = POST.eyebrow;
+    document.getElementById('handle').textContent = POST.handle;
+
+    const titleEl = document.getElementById('title');
+    titleEl.textContent = POST.title;
+
+    const wrap = document.getElementById('races');
+    POST.races.forEach((race) => {
+      const group = document.createElement('div');
+
+      const label = document.createElement('p');
+      label.className = 'ritc-eyebrow rr-race-name';
+      label.textContent = race.place ? race.name + ' · ' + race.place : race.name;
+
+      const ul = document.createElement('ul');
+      ul.className = 'rr-runners';
+      race.runners.forEach((runner) => {
+        const li = document.createElement('li');
+        li.textContent = runner;
+        ul.append(li);
+      });
+
+      group.append(label, ul);
+      wrap.append(group);
+    });
+
+    if (POST.footer) {
+      const footer = document.getElementById('footer');
+      footer.textContent = POST.footer;
+      footer.hidden = false;
+    }
+
+    ritcPaintMarks();
+
+    /* Fit AFTER the webfonts load. Measuring while document.fonts.status is
+       still 'loading' sizes the roster against fallback metrics, and Archivo
+       then swaps in wider, so a roster judged to fit can overflow in the
+       screenshot. */
+    document.fonts.ready.then(() => {
+      ritcAllowBreak(titleEl);
+      ritcFitText(titleEl, { maxLines: 2, min: 48 });
+
+      /* The roster is the content. If the names overflow the field, shrink
+         them together until they fit, and stop at the 21px readable floor
+         rather than silently going below it.
+
+         Both axes matter. Names are nowrap so a long one overflows sideways
+         without ever adding height, which a height-only test cannot see. */
+      const copy = document.querySelector('.rr-copy');
+      const runners = [...document.querySelectorAll('.rr-runners li')];
+      const tooTall = () => copy.scrollHeight > copy.clientHeight;
+      const tooWide = () => runners.some((li) => li.scrollWidth > li.clientWidth);
+
+      let size = 32;
+      while ((tooTall() || tooWide()) && size > 21) {
+        size -= 1;
+        runners.forEach((li) => { li.style.fontSize = size + 'px'; });
+      }
+
+      /* Still overflowing at the readable floor. Say so loudly: export.mjs
+         fails the run on this attribute rather than shipping a clipped
+         graphic that reported ok. */
+      if (tooTall() || tooWide()) {
+        document.documentElement.setAttribute(
+          'data-ritc-overflow',
+          tooTall() && tooWide() ? 'height and width' : tooTall() ? 'height' : 'width',
+        );
+      }
+
+      document.documentElement.setAttribute('data-ritc-ready', '1');
+    });
+  })();
+</script>
+
+</body>
+</html>
