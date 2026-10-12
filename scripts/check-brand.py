@@ -18,7 +18,7 @@ Two checks:
   allowed to name them.
 
   Pixels. The 2020 badge has a signature: its blue field and its yellow rope in
-  the same region, the yellow touching the blue. Either colour alone can be a
+  the same region, the yellow sitting inside the blue. Either colour alone can be a
   sky or a race sign, so a region fails only when both pass their minimum share. Each image is checked whole and
   in an 8 by 8 grid, so a small watermark is found wherever it sits. A video is sampled every
   two seconds, or at 150 points spread end to end on a long one.
@@ -41,7 +41,8 @@ VIDEO_STEP_S = 2
 VIDEO_MAX_FRAMES = 150
 GRID = 8
 CHECK_PX = 2160  # images are checked at this long edge, no smaller
-ADJ_PX = 2  # how close, at check resolution, rope colour must sit to field colour
+ADJ_PX = 3  # neighbourhood radius, at check resolution, round each rope-colour pixel
+FIELD_SHARE = 0.25  # share of that neighbourhood that must be field colour
 
 HEX_RE = re.compile(r'#([0-9A-Fa-f]{6})(?:[0-9A-Fa-f]{2})?(?![0-9A-Fa-f])')
 RGB_RE = re.compile(r'rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})')
@@ -107,17 +108,16 @@ def regions(h, w):
     return out
 
 
-def dilate(mask, r):
-    """Grow a boolean mask by r pixels. Padded, so nothing wraps round the
-    frame edge the way np.roll would."""
+def box_share(mask, r):
+    """For every pixel, the share of its (2r+1) square neighbourhood that is
+    set in mask. Integral image, padded, so nothing wraps round the edge."""
     import numpy as np
+    m = np.pad(mask.astype(np.int32), r)
+    c = np.pad(m.cumsum(0).cumsum(1), ((1, 0), (1, 0)))
+    k = 2 * r + 1
     h, w = mask.shape
-    p = np.pad(mask, r)
-    out = np.zeros_like(mask)
-    for dy in range(2 * r + 1):
-        for dx in range(2 * r + 1):
-            out |= p[dy:dy + h, dx:dx + w]
-    return out
+    total = c[k:k + h, k:k + w] - c[:h, k:k + w] - c[k:k + h, :w] + c[:h, :w]
+    return total / float(k * k)
 
 
 def badge_regions(img, sig_rgb, min_frac, tol):
@@ -126,10 +126,11 @@ def badge_regions(img, sig_rgb, min_frac, tol):
     a = np.asarray(img.convert('RGBA')).astype(np.int32)
     rgb, opaque = a[..., :3], a[..., 3] >= 128
     near = [((rgb - np.array(c)) ** 2).sum(axis=2) <= tol * tol for c in sig_rgb]
-    # On the badge the rope sits on the field, so count only rope-colour
-    # pixels that touch field colour. A blue stripe beside yellow leaves on a
-    # pavement has both colours but not touching; this is what tells them apart.
-    near[1] = near[1] & dilate(near[0], ADJ_PX)
+    # On the badge the rope colour sits inside the field colour: rope strands
+    # between field, letters on the field. So count only rope-colour pixels
+    # whose neighbourhood is mostly field. Blonde hair against a blue jacket,
+    # or leaves beside a blue stripe, touch the blue but are not inside it.
+    near[1] = near[1] & (box_share(near[0], ADJ_PX) >= FIELD_SHARE)
     out = []
     for name, (y0, y1, x0, x1) in regions(*opaque.shape).items():
         n = int(opaque[y0:y1, x0:x1].sum())
