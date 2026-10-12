@@ -56,7 +56,7 @@ def load_rules():
     dep = json.loads(TOKENS_PATH.read_text())['deprecated']
     colors = [dict(c, rgb=hex_rgb(c['hex'])) for c in dep['colors']]
     sig = dep['rasterSignature']
-    return colors, [hex_rgb(h) for h in sig['colors']], sig['minFraction']
+    return colors, [hex_rgb(h) for h in sig['colors']], sig['minFraction'], sig['tolerance']
 
 
 def matches(rgb, rule):
@@ -209,9 +209,9 @@ def walk(root):
 def repo_files():
     """Tracked plus untracked-but-not-ignored files, so a new file is checked
     before it is ever committed."""
-    out = subprocess.run(['git', '-C', str(REPO), 'ls-files', '-co', '--exclude-standard'],
-                         capture_output=True, text=True, check=True).stdout.split()
-    return [REPO / p for p in out if (REPO / p).is_file()]
+    out = subprocess.run(['git', '-C', str(REPO), 'ls-files', '-z', '-co', '--exclude-standard'],
+                         capture_output=True, check=True).stdout.decode().split('\0')
+    return [REPO / p for p in out if p and (REPO / p).is_file()]
 
 
 def staged_files(tmp):
@@ -244,8 +244,7 @@ def check_one(f, rel, colors, sig, min_frac, tol):
 
 
 def main(argv):
-    colors, sig, min_frac = load_rules()
-    tol = max(c.get('tolerance', 0) for c in colors if c.get('match') == 'near')
+    colors, sig, min_frac, tol = load_rules()
     hits = []
     if argv == ['--staged']:
         with tempfile.TemporaryDirectory() as tmp:
@@ -264,7 +263,8 @@ def main(argv):
         files = repo_files()
         exports = REPO / 'exports'
         if exports.is_dir():
-            files += [f for f in walk(exports)]
+            seen = set(files)
+            files += [f for f in walk(exports) if f not in seen]
     for f in files:
         try:
             rel = f.relative_to(REPO)
