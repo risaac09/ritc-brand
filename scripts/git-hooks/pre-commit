@@ -17,7 +17,7 @@ fi
 # Xcode interpreter by full path comes last as the known-good fallback.
 for py in python3 /Applications/Xcode.app/Contents/Developer/usr/bin/python3; do
   if command -v "$py" >/dev/null 2>&1 && "$py" -c 'import PIL, numpy' >/dev/null 2>&1; then
-    exec "$py" "$(git rev-parse --show-toplevel)/scripts/check-brand.py"
+    exec "$py" "$(git rev-parse --show-toplevel)/scripts/check-brand.py" --staged
   fi
 done
 echo "pre-commit: no Python with Pillow and numpy found, brand check not run" >&2

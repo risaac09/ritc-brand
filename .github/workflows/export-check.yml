@@ -20,6 +20,8 @@ jobs:
       - run: pip install pillow numpy
       # Retired colours in any file, and the 2020 badge in any committed image.
       - run: python scripts/check-brand.py
+      # Every badge file must still be what tokens.json builds.
+      - run: python scripts/build-logo-assets.py --verify
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run export

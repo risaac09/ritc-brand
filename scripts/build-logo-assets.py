@@ -29,6 +29,7 @@ import numpy as np
 REPO = Path(__file__).resolve().parent.parent
 SRC = REPO / 'assets/logo/_source'
 OUT = REPO / 'assets/logo'
+COMMITTED = OUT
 TOKENS = json.loads((REPO / 'brand/tokens.json').read_text())
 SS = 4  # supersample factor for a clean mask edge
 SIZES = (1024, 512, 256, 128)
@@ -110,16 +111,33 @@ def remap_bw(src_rgba, variant):
 
 
 def remap_svg(src_svg, dst_svg, variant):
-    """Repaint every fill in the 2020 trace with the same remap as the PNGs."""
+    """Repaint every fill in the 2020 trace with the same remap as the PNGs.
+
+    Each traced path starts at its translate() point, so a path whose start
+    sits outside RIM is an edge speck of the master's white background, and
+    gets the same rim rule as the PNGs: its anchor share goes to the field."""
     target = np.array([palette(variant['field']), palette(variant['rope']),
                        palette(variant['anchor'])], float)
+    view = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', src_svg.read_text())
+    vw, vh = float(view.group(1)), float(view.group(2))
 
     def repl(m):
-        rgb = np.array(hex_rgb(m.group(2)), float)
-        out = np.clip(np.einsum('k,kc->c', unmix(rgb[None, :])[0], target), 0, 255).round().astype(int)
-        return f'{m.group(1)}#{out[0]:02X}{out[1]:02X}{out[2]:02X}'
+        tag = m.group(0)
+        fill = re.search(r'fill="#([0-9A-Fa-f]{6})"', tag)
+        if not fill:
+            return tag
+        w = unmix(np.array(hex_rgb(fill.group(1)), float)[None, :])[0]
+        t = re.search(r'translate\(([-\d.]+),\s*([-\d.]+)\)', tag)
+        if t:
+            x, y = float(t.group(1)), float(t.group(2))
+            if np.hypot(x - vw / 2, y - vh / 2) / (min(vw, vh) / 2) > RIM:
+                w = w.copy()
+                w[0] += w[2]
+                w[2] = 0
+        out = np.clip(np.einsum('k,kc->c', w, target), 0, 255).round().astype(int)
+        return tag.replace(fill.group(0), f'fill="#{out[0]:02X}{out[1]:02X}{out[2]:02X}"')
 
-    svg = re.sub(r'(fill=")#([0-9A-Fa-f]{6})', repl, src_svg.read_text())
+    svg = re.sub(r'<path[^>]*>', repl, src_svg.read_text())
     dst_svg.write_text(svg)
     return dst_svg.stat().st_size
 
@@ -289,7 +307,7 @@ def trace_silhouette(rgba_png, svg_path, upscale=2, speckle=12):
     return add_viewbox(svg_path), svg.count('<path')
 
 
-def main():
+def main(quiet=False):
     OUT.mkdir(parents=True, exist_ok=True)
     report = []
     variants = TOKENS['mark']['variants']
@@ -322,6 +340,8 @@ def main():
     report.append(('anchor PNGs', [(f'{len(made_anchor)} files', anchor.size, 0)], None))
 
     trace = SRC / 'ritc-badge-2020-trace.svg'
+    if not trace.exists():
+        sys.exit(f'missing {trace}')
     svgs = [('ritc-badge.svg', remap_svg(trace, OUT / 'ritc-badge.svg', variants['default'])),
             ('ritc-badge-ocean.svg', remap_svg(trace, OUT / 'ritc-badge-ocean.svg', variants['ocean'])),
             ('ritc-badge-ebony.svg', remap_svg(trace, OUT / 'ritc-badge-ebony.svg', variants['ebony']))]
@@ -330,13 +350,14 @@ def main():
     # rebuild; skip it rather than fail when the tracer is missing.
     try:
         import vtracer  # noqa: F401
-        svgs.append(('ritc-anchor.svg',
-                     trace_silhouette(OUT / 'ritc-anchor.png', OUT / 'ritc-anchor.svg')))
+        if not quiet:
+            svgs.append(('ritc-anchor.svg',
+                         trace_silhouette(OUT / 'ritc-anchor.png', OUT / 'ritc-anchor.svg')))
     except ImportError:
         svgs.append(('ritc-anchor.svg', 'kept as committed (vtracer not installed)'))
     report.append(('SVGs', svgs, None))
 
-    for title, items, circle in report:
+    for title, items, circle in ([] if quiet else report):
         print(f'\n{title}:')
         for it in items:
             print('   ', it)
@@ -344,5 +365,37 @@ def main():
             print(f'    circle center=({circle[0]:.1f},{circle[1]:.1f}) r={circle[2]:.1f}')
 
 
+def verify():
+    """Rebuild into a scratch folder and compare with the committed files, so
+    CI can prove every badge file still comes out of tokens.json. PNGs are
+    compared by pixel, not by byte, because encoders differ between Pillow
+    versions. Exit 1 on any difference."""
+    global OUT
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        OUT = Path(tmp)
+        main(quiet=True)
+        bad = []
+        for built in sorted(OUT.iterdir()):
+            committed = COMMITTED / built.name
+            if built.name == 'ritc-anchor.svg':
+                continue  # needs vtracer; holds no colour
+            if not committed.exists():
+                bad.append(f'{built.name}: built but not committed')
+            elif built.suffix == '.png':
+                a = np.asarray(Image.open(built).convert('RGBA')).astype(int)
+                b = np.asarray(Image.open(committed).convert('RGBA')).astype(int)
+                if a.shape != b.shape or np.abs(a - b).max() > 1:
+                    bad.append(f'{built.name}: committed pixels differ from the build')
+            elif built.read_bytes() != committed.read_bytes():
+                bad.append(f'{built.name}: committed file differs from the build')
+    for b in bad:
+        print(b)
+    if bad:
+        print('\nRun scripts/build-logo-assets.py and commit the result.', file=sys.stderr)
+        sys.exit(1)
+    print('build-logo-assets: committed files match tokens.json.')
+
+
 if __name__ == '__main__':
-    main()
+    verify() if '--verify' in sys.argv[1:] else main()
