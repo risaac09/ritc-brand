@@ -238,31 +238,47 @@ Nothing smaller than 21px. A caption below that disappears in the feed.
 
 ### Primary mark: the circular badge
 
-Circular badge, **bright blue field `#0E5CC6`**, **yellow rope border and
-yellow wordmark `#F5E056`**, white anchor, with a **maple leaf** at the
-anchor's crown. RHODE ISLAND above TRACK CLUB in condensed caps.
+Circular badge in the singlet palette: **Deep Navy field**, **Sand rope border,
+Sand wordmark and Sand maple leaf**, **White anchor**. RHODE ISLAND above TRACK
+CLUB in condensed caps. The maple leaf at the anchor's crown is deliberate. It
+is the club's mark as drawn.
 
-Corrected 2026-09-12 against the actual master files. The earlier description
-here said navy field, white rope, white anchor, and an RI-style emblem at the
-crown. All three colour claims and the emblem were wrong. The masters are 2020
-CMYK JPEGs and predate the 2026 kit refresh.
+**Recoloured 2026-10-12, Isaac's call.** The 2020 master is drawn in a bright
+blue and a yellow that belong to no part of the 2026 kit. Those two colours are
+now retired, listed in `tokens.json` under `deprecated`, and the badge is built
+in the kit's own colours instead. This replaces the 2026-09-13 decision that the
+badge would not be redrawn. The drawing is unchanged: same rope, same anchor,
+same wordmark, same leaf. Only the colour moved.
 
-The maple leaf is deliberate. An earlier version of this document guessed it
-might be inherited from a stock template, which was speculation and was wrong.
-It is the club's mark as drawn.
+How it is built, so nobody redraws it by hand: `scripts/build-logo-assets.py`
+reads the 2020 master, works out for every pixel how much of it was field, rope
+or anchor, and repaints it from the palette names in `tokens.json` under
+`mark.variants`. Edges keep their blend, so the rope and the wordmark are as
+crisp as the master. Change a variant there and rerun the script; never edit a
+badge file directly.
 
-**The badge is on a different colour system than the 2026 singlet, and it
-stays that way.** Bright blue and yellow are not in the primary palette and not
-in the secondary one. Settled 2026-09-13: the badge is not being redrawn. It is
-the club's real mark, maple leaf and all, and the graphics system carries it as
-it is.
+| File | Field | Rope, wordmark, leaf | Anchor | Use |
+|---|---|---|---|---|
+| `ritc-badge` | Deep Navy | Sand | White | Everything, unless a layout has a reason |
+| `ritc-badge-ocean` | Deep Navy | Baby Ocean Blue | White | All-singlet pieces with no outers in them |
+| `ritc-badge-ebony` | Ebony | Sand | White | Outers pieces: warmups, the tee, merch mockups |
+| `ritc-badge-bw` | Ebony | White | White | One colour: print and single-ink jobs |
 
-That works, and it was verified rather than assumed. The badge's outermost
-element is the yellow rope, not the blue field, so the boundary that matters
-measures 12.50 against Deep Navy. Rendered on Sand, Navy, Baby Ocean Blue and
-White at sizes from 170px down to 48px, it separates cleanly on all of them.
-The badge needs no container and no special treatment on any ground in this
-system.
+Each comes as PNG at 1024, 512, 256 and 128. The default, ocean and ebony
+versions also come as SVG.
+
+**Edge.** The field runs as a thin rim outside the rope. On most grounds the
+rim is the edge. On a ground that matches the field (the default on Deep Navy,
+ebony on Ebony) the rim disappears and the rope becomes the edge: Sand on Deep
+Navy measures 8.49, Sand on Ebony 8.64, Baby Ocean Blue on Deep Navy 9.40. All
+four were rendered on Sand, White, Baby Ocean Blue, Deep Navy and Ebony from
+200px down to 48px on 2026-10-12, and separate on every ground.
+
+**The guard.** `scripts/check-brand.py` fails on any retired colour in a file
+and on the 2020 badge in any image or video. Run it on every render that leaves
+this repo, including reels and Resolve exports:
+`scripts/check-brand.py path/to/render.mp4`. CI runs it on the repo and on
+every template export.
 
 **Clear space.** 25 percent of the badge diameter, on all four sides. At a 200px
 badge that is 50px of nothing. No type, no photo edge, no other mark inside it.
@@ -276,7 +292,7 @@ not social specs, but they are the reason the badge is drawn to survive small.
 
 **Ground.** The badge carries its own field and its own rope edge, so it sits
 on Sand, White, Baby Ocean Blue, Deep Navy, Ebony, and on a photograph, with no
-container and no separation needed. The yellow rope does that work.
+container and no separation needed.
 
 ### Secondary marks
 
@@ -321,10 +337,10 @@ The first four come from the singlet. The pennant comes from the apparel line.
 
 ### Don't
 
-- Do not recolor the badge. It is blue and yellow, whatever the rest of the
-  system is doing. There is no navy version, no teal version, no one-color
-  knockout, until the designer draws one. A black and white master exists and
-  is in `assets/logo/` as `ritc-badge-bw.png`.
+- Do not recolour the badge by hand, and do not use the 2020 blue and yellow
+  master anywhere. Every badge comes out of `scripts/build-logo-assets.py`
+  from the variants in `tokens.json`. Need another colourway? Add a variant
+  there and rebuild.
 - Do not put the badge on a busy part of a photograph. Scrim it or move it.
 - Do not stretch, skew, rotate, or arc any mark.
 - Do not add a drop shadow, an outer glow, or a stroke to the badge.
