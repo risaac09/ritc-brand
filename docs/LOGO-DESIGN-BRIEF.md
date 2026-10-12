@@ -8,21 +8,16 @@ wordmark-from-scratch assumption. Evidence and measurements in
 
 The club has a working badge. Two 2020 master JPGs, CMYK, 1025x1026:
 
-- Circular badge, **bright blue field `#0E5CC6`**, **yellow rope border and
-  yellow wordmark `#F5E056`**, white anchor, **maple leaf** at the crown.
+- Circular badge, a rope border, white anchor, **maple leaf** at the crown.
 - RHODE ISLAND above TRACK CLUB, condensed caps.
 - A black-and-white master also exists.
 
-**The badge is not being redrawn** (settled 2026-09-13). It is the club's real
-mark, and the maple leaf is deliberate. The 2026 kit palette (Baby Ocean Blue
-`#A2C9CF`, Deep Navy `#011E3D`, White, plus Sand `#C6B79B` and Ebony `#1C1C1C`
-for the outers) is a different colour system from the badge, and that is simply
-how it is: the graphics system carries the badge as it stands.
-
-It works on every ground without special handling. The badge's outermost
-element is the yellow rope rather than the blue field, so the boundary that
-governs legibility measures 12.50 against Deep Navy. Verified by rendering on
-Sand, Navy, Baby Ocean Blue and White from 170px down to 48px.
+The 2020 masters are drawn in a bright blue and a yellow. **Those colours are
+retired (2026-10-12).** The badge now runs in the 2026 kit palette: Deep Navy
+`#011E3D` field, Sand `#C6B79B` rope, wordmark and leaf, White anchor, with
+Baby Ocean Blue `#A2C9CF` and Ebony `#1C1C1C` variants. The repository builds
+those from the masters by remapping colour, pixel by pixel. The drawing itself
+is the club's real mark and is not being redesigned.
 
 So this is not a redesign job. It is a file-format job.
 
@@ -31,8 +26,9 @@ So this is not a redesign job. It is a file-format job.
 1. **Vector source for the badge.** AI, EPS, or a real SVG with organized
    layers. Every badge asset in this repository is machine-derived from a
    1025px raster JPG, which is why the rope's twist is an approximation rather
-   than the real geometry. The mark itself is correct and settled; it just
-   needs to exist as vector.
+   than the real geometry. The mark and its colours are settled; it just
+   needs to exist as vector, in the 2026 colours above, with the default,
+   ocean and ebony colourways as separate artboards or layers.
 
 2. **The four singlet marks as drawn**, in vector: the anchor, the five-point
    star, the star column from the front seam, and HOPE as set. These are the

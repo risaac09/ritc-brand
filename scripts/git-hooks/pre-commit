@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# ritc-brand pre-commit: the shared secret scan, then the brand check.
+# Install once per clone:
+#   ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
+set -euo pipefail
+
+SECRET_SCAN="$HOME/scripts/git-hooks/pre-commit-secret-scan"
+if [ -x "$SECRET_SCAN" ]; then
+  "$SECRET_SCAN"
+else
+  echo "pre-commit: secret scan not found at $SECRET_SCAN" >&2
+  exit 1
+fi
+
+# Find a Python that has Pillow and numpy. On Isaac's Mac the Homebrew python3
+# has neither and /usr/bin/python3 is blocked by the Xcode licence, so the
+# Xcode interpreter by full path comes last as the known-good fallback.
+for py in python3 /Applications/Xcode.app/Contents/Developer/usr/bin/python3; do
+  if command -v "$py" >/dev/null 2>&1 && "$py" -c 'import PIL, numpy' >/dev/null 2>&1; then
+    exec "$py" "$(git rev-parse --show-toplevel)/scripts/check-brand.py" --staged
+  fi
+done
+echo "pre-commit: no Python with Pillow and numpy found, brand check not run" >&2
+exit 1
