@@ -20,7 +20,9 @@ Do this before the first-Monday committee meeting.
 
 1. **Insights, by hand.** On the club account, open Professional dashboard,
    then Insights, set to "Last 30 days". Copy the numbers into
-   `data/insights.json`, and set `period_end` to the day you read them. Copy
+   `data/insights.json`, and set `read_on` to the day you read them. The page
+   says "as shown when read on" because Instagram does not print the exact
+   start and end dates of its 30-day window. Copy
    the most-active-times bars into `data/active_hours.json`, and set
    `read_on`.
 2. **Public counts.** Add a row to the top of `data/profile.json` with the
@@ -44,4 +46,8 @@ and when.
   "hidden".
 - `plays` is reel plays only. Carousels and photos have `null`.
 - `collab` is true when the post lives on the club grid but another account
-  posted it.
+  posted it. `owner` names organisations (Run Newport, Fundati, NBC Sports
+  Boston) but is `member` for an athlete's own account, and titles carry no
+  athlete names, per the repo rule on crediting people only with permission.
+- Keep every post on the grid dated Oct 1, 2025 or later. The page prints the
+  date range it finds; it cannot tell you a post is missing.

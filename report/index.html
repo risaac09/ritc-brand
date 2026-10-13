@@ -117,12 +117,14 @@
   }
 
   function bars(container, rows) {
-    const max = Math.max(...rows.map((r) => r.value));
+    const max = Math.max(0, ...rows.map((r) => r.value));
+    if (!rows.length) { container.append(el('p', 'No data in this file.', 'note')); return; }
     rows.forEach((r) => {
       const row = el('div', null, 'bar');
       const track = el('div', null, 'track');
       const fill = el('div', null, 'fill');
-      fill.style.width = `${(r.value / (r.scaleTo || max)) * 100}%`;
+      const scale = r.scaleTo || max;
+      fill.style.width = scale > 0 ? `${(r.value / scale) * 100}%` : '0%';
       track.append(fill);
       row.append(el('span', r.label), track, el('span', r.text, 'n'));
       container.append(row);
@@ -157,7 +159,7 @@
       $('stamp').textContent = `Last updated ${day(latest.date)} by ${who}. Next update due by ${day(log.next_due)}.`;
 
       const ins = insights[0];
-      setWindow('reach-window', [['Covers:', `Instagram Insights "${ins.window}", ending ${day(ins.period_end)}.`]]);
+      setWindow('reach-window', [['Covers:', `Instagram Insights "${ins.window}", as shown when read on ${day(ins.read_on)}.`]]);
       const rk = $('reach-kpis');
       kpi(rk, num(ins.views), 'Views (every time content was on screen)');
       kpi(rk, num(ins.viewers), 'Accounts reached (unique)');
@@ -177,7 +179,7 @@
         kpi(fk, `${d >= 0 ? '+' : '−'}${num(Math.abs(d))}`, `Follower change, ${day(first.date)} to ${day(now.date)}`);
       }
 
-      setWindow('mix-window', [['Covers:', `Instagram Insights "${ins.window}", ending ${day(ins.period_end)}. Shares of all views in that window.`]]);
+      setWindow('mix-window', [['Covers:', `Instagram Insights "${ins.window}", as shown when read on ${day(ins.read_on)}. Shares of all views in that window.`]]);
       bars($('mix-bars'), [
         { label: 'Stories', value: ins.views_stories_share, text: pct(ins.views_stories_share), scaleTo: 1 },
         { label: 'Reels', value: ins.views_reels_share, text: pct(ins.views_reels_share), scaleTo: 1 },
@@ -200,6 +202,8 @@
           ['Counts as of:', `${day(countsOn)}.`],
           ['Totals:', `${on} tag On, ${rn} tag Run Newport.`],
         ]);
+      } else {
+        setWindow('partners-window', [['Totals:', `No post in the data tags On or Run Newport. Counts as of ${day(countsOn)}.`]]);
       }
       table($('partners-table'),
         [['Date'], ['Post'], ['Partners'], ['Likes', 'num'], ['Comments', 'num'], ['Reel plays', 'num']],
@@ -212,13 +216,13 @@
       const all = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
       const ad = all.map((p) => p.date).sort();
       setWindow('posts-window', [
-        ['Posts dated:', `${day(ad[0])} to ${day(ad[ad.length - 1])} (every post since Oct 1, 2025, collabs included).`],
+        ['Posts dated:', `${day(ad[0])} to ${day(ad[ad.length - 1])}, collabs included.`],
         ['Counts as of:', `${day(countsOn)}.`],
       ]);
       table($('posts-table'),
-        [['Date'], ['Post'], ['Posted by', 'hide-sm'], ['Format', 'hide-sm'], ['Likes', 'num'], ['Comments', 'num'], ['Reel plays', 'num']],
+        [['Date'], ['Post'], ['On the grid as', 'hide-sm'], ['Format', 'hide-sm'], ['Likes', 'num'], ['Comments', 'num'], ['Reel plays', 'num']],
         all.map((p) => [
-          [day(p.date)], [p.title, '', p.url], [`@${p.owner}`, 'hide-sm'], [p.type, 'hide-sm'],
+          [day(p.date)], [p.title, '', p.url], [p.collab ? 'Collab' : 'Club post', 'hide-sm'], [p.type, 'hide-sm'],
           [p.likes == null ? 'hidden' : num(p.likes), 'num'], [num(p.comments), 'num'], [p.plays == null ? '' : num(p.plays), 'num'],
         ]));
 
