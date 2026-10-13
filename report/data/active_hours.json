@@ -1,0 +1,38 @@
+{
+ "read_on": "2026-10-13",
+ "source": "Instagram Insights, Followers panel, most active times",
+ "rows": [
+  {
+   "hour": "12a",
+   "followers_active": 67
+  },
+  {
+   "hour": "3a",
+   "followers_active": 234
+  },
+  {
+   "hour": "6a",
+   "followers_active": 285
+  },
+  {
+   "hour": "9a",
+   "followers_active": 302
+  },
+  {
+   "hour": "12p",
+   "followers_active": 315
+  },
+  {
+   "hour": "3p",
+   "followers_active": 332
+  },
+  {
+   "hour": "6p",
+   "followers_active": 252
+  },
+  {
+   "hour": "9p",
+   "followers_active": 55
+  }
+ ]
+}
