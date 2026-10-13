@@ -1,0 +1,17 @@
+{
+ "next_due": "2026-11-02",
+ "entries": [
+  {
+   "date": "2026-10-13",
+   "what": "Followers, post count, posts table",
+   "by": "Isaac Rubinstein",
+   "how": "Public counts from the profile, pulled with a scraper (Apify) and checked post by post against the live grid"
+  },
+  {
+   "date": "2026-10-13",
+   "what": "Reach, views, interactions, profile visits, active times",
+   "by": "Isaac Rubinstein",
+   "how": "Copied by hand from Instagram Insights on the club account, 'Last 30 days'"
+  }
+ ]
+}

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RITC Instagram Report</title>
+<link rel="stylesheet" href="../brand/tokens.css">
+<style>
+  /* Colours and fonts come from brand/tokens.css. Sizes here are for a web
+     page, not the 1080 canvas the --fs-* tokens are built for. Baby Ocean
+     Blue is used only as a fill, never as type, per BRAND.md. */
+  body {
+    margin: 0;
+    background: var(--ritc-white);
+    color: var(--ritc-navy);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1, h2 { font-family: var(--font-display); text-transform: uppercase; margin: 0; font-weight: 600; }
+  h1 { font-size: 40px; line-height: 1.1; }
+  h2 { font-size: 24px; margin-bottom: 4px; }
+  section { margin-top: 40px; }
+  .handle { margin: 4px 0 0; font-weight: 600; }
+  .stamp { margin: 12px 0 0; }
+  .window { margin: 0 0 16px; font-size: 14px; }
+  .window b { font-weight: 600; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .kpi { border: 2px solid var(--ritc-blue); border-radius: 6px; padding: 12px; }
+  .kpi .v { font-family: var(--font-display); font-size: 32px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: 14px; }
+  .bars { display: grid; gap: 8px; }
+  .bar { display: grid; grid-template-columns: 7.5rem 1fr 4rem; gap: 8px; align-items: center; font-size: 14px; }
+  .bar .track { background: var(--ritc-white); border: 1px solid var(--ritc-blue); border-radius: 4px; height: 18px; }
+  .bar .fill { background: var(--ritc-blue); height: 100%; border-radius: 3px; }
+  .bar .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-weight: 600; border-bottom: 2px solid var(--ritc-navy); padding: 6px 8px; white-space: nowrap; }
+  td { border-bottom: 1px solid var(--ritc-blue); padding: 6px 8px; vertical-align: top; }
+  td.num, th.num { text-align: right; }
+  a { color: var(--ritc-navy); }
+  .note { font-size: 14px; max-width: 70ch; }
+  .err { font-weight: 600; }
+  @media (max-width: 520px) { .hide-sm { display: none; } .bar { grid-template-columns: 6rem 1fr 3.5rem; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>RITC Instagram Report</h1>
+    <p class="handle"><a href="https://www.instagram.com/rhodeislandtrackclub/">@rhodeislandtrackclub</a></p>
+    <p class="stamp" id="stamp">Loading…</p>
+    <p class="note">Every figure on this page states the dates it covers. Numbers from different date ranges are never added, divided or compared with each other.</p>
+  </header>
+
+  <section id="reach">
+    <h2>Reach</h2>
+    <p class="window" id="reach-window"></p>
+    <div class="kpis" id="reach-kpis"></div>
+  </section>
+
+  <section id="followers">
+    <h2>Followers</h2>
+    <p class="window" id="followers-window"></p>
+    <div class="kpis" id="followers-kpis"></div>
+  </section>
+
+  <section id="mix">
+    <h2>Where views came from</h2>
+    <p class="window" id="mix-window"></p>
+    <div class="bars" id="mix-bars"></div>
+  </section>
+
+  <section id="active">
+    <h2>When followers are online</h2>
+    <p class="window" id="active-window"></p>
+    <div class="bars" id="active-bars"></div>
+  </section>
+
+  <section id="partners">
+    <h2>Posts that tag a partner</h2>
+    <p class="window" id="partners-window"></p>
+    <div class="table-wrap"><table id="partners-table"></table></div>
+  </section>
+
+  <section id="posts">
+    <h2>Every post on the grid</h2>
+    <p class="window" id="posts-window"></p>
+    <div class="table-wrap"><table id="posts-table"></table></div>
+  </section>
+
+  <section id="method">
+    <h2>How this page is made</h2>
+    <p class="note">Reach, views, interactions, profile visits and active times are copied by hand from Instagram Insights on the club account. Insights needs the club login, so nobody outside the club can pull them. Followers, likes, comments and reel plays are public counts from the profile. Partner posts are posts on the club's grid, collabs included, that tag or are posted by On (@on) or Run Newport (@runnewport).</p>
+    <p class="note">Once a month, before the first-Monday committee meeting, the social media chair updates the files in <code>report/data/</code> and adds a row to the log below. This page is plain HTML in the club's <a href="https://github.com/risaac09/ritc-brand">ritc-brand</a> repository, so every change is a commit: <a href="https://github.com/risaac09/ritc-brand/commits/main/report/data">full change history</a>.</p>
+    <div class="table-wrap"><table id="log-table"></table></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // Dates are stored as YYYY-MM-DD and printed as written, with no time zone conversion.
+  const day = (s) => { const [y, m, d] = s.split('-').map(Number); return `${MONTHS[m - 1]} ${d}, ${y}`; };
+  const num = (n) => n.toLocaleString('en-US');
+  const pct = (x) => `${Math.round(x * 100)}%`;
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  const setWindow = (id, parts) => { const p = $(id); p.replaceChildren(); parts.forEach(([b, t]) => { p.append(el('b', b), document.createTextNode(` ${t} `)); }); };
+
+  function kpi(container, value, label) {
+    const k = el('div', null, 'kpi');
+    k.append(el('div', value, 'v'), el('div', label, 'l'));
+    container.append(k);
+  }
+
+  function bars(container, rows) {
+    const max = Math.max(...rows.map((r) => r.value));
+    rows.forEach((r) => {
+      const row = el('div', null, 'bar');
+      const track = el('div', null, 'track');
+      const fill = el('div', null, 'fill');
+      fill.style.width = `${(r.value / (r.scaleTo || max)) * 100}%`;
+      track.append(fill);
+      row.append(el('span', r.label), track, el('span', r.text, 'n'));
+      container.append(row);
+    });
+  }
+
+  function table(t, head, rows) {
+    t.replaceChildren();
+    const thead = el('thead'); const tr = el('tr');
+    head.forEach(([h, cls]) => tr.append(el('th', h, cls)));
+    thead.append(tr);
+    const tbody = el('tbody');
+    rows.forEach((cells) => {
+      const r = el('tr');
+      cells.forEach(([v, cls, href]) => {
+        const td = el('td', null, cls);
+        if (href) { const a = el('a', v); a.href = href; td.append(a); } else td.textContent = v;
+        r.append(td);
+      });
+      tbody.append(r);
+    });
+    t.append(thead, tbody);
+  }
+
+  const load = (f) => fetch(`data/${f}`, { cache: 'no-store' }).then((r) => { if (!r.ok) throw new Error(f); return r.json(); });
+
+  Promise.all(['insights.json', 'profile.json', 'posts.json', 'active_hours.json', 'update_log.json'].map(load))
+    .then(([insights, profile, posts, active, log]) => {
+      const entries = log.entries.slice().sort((a, b) => b.date.localeCompare(a.date));
+      const latest = entries[0];
+      const who = [...new Set(entries.filter((e) => e.date === latest.date).map((e) => e.by))].join(' and ');
+      $('stamp').textContent = `Last updated ${day(latest.date)} by ${who}. Next update due by ${day(log.next_due)}.`;
+
+      const ins = insights[0];
+      setWindow('reach-window', [['Covers:', `Instagram Insights "${ins.window}", ending ${day(ins.period_end)}.`]]);
+      const rk = $('reach-kpis');
+      kpi(rk, num(ins.views), 'Views (every time content was on screen)');
+      kpi(rk, num(ins.viewers), 'Accounts reached (unique)');
+      kpi(rk, num(ins.interactions), 'Interactions');
+      kpi(rk, num(ins.accounts_engaged), 'Accounts engaged');
+      kpi(rk, num(ins.profile_visits), 'Profile visits');
+
+      const snaps = profile.slice().sort((a, b) => b.date.localeCompare(a.date));
+      const now = snaps[0];
+      setWindow('followers-window', [['Counted on:', `${day(now.date)}, from the public profile.`]]);
+      const fk = $('followers-kpis');
+      kpi(fk, num(now.followers), `Followers on ${day(now.date)}`);
+      kpi(fk, num(now.posts), `Posts on the grid on ${day(now.date)}`);
+      if (snaps.length > 1) {
+        const first = snaps[snaps.length - 1];
+        const d = now.followers - first.followers;
+        kpi(fk, `${d >= 0 ? '+' : '−'}${num(Math.abs(d))}`, `Follower change, ${day(first.date)} to ${day(now.date)}`);
+      }
+
+      setWindow('mix-window', [['Covers:', `Instagram Insights "${ins.window}", ending ${day(ins.period_end)}. Shares of all views in that window.`]]);
+      bars($('mix-bars'), [
+        { label: 'Stories', value: ins.views_stories_share, text: pct(ins.views_stories_share), scaleTo: 1 },
+        { label: 'Reels', value: ins.views_reels_share, text: pct(ins.views_reels_share), scaleTo: 1 },
+        { label: 'Feed posts', value: ins.views_posts_share, text: pct(ins.views_posts_share), scaleTo: 1 },
+        { label: 'Non-followers', value: ins.views_nonfollowers_share, text: pct(ins.views_nonfollowers_share), scaleTo: 1 },
+        { label: 'Followers', value: ins.views_followers_share, text: pct(ins.views_followers_share), scaleTo: 1 },
+      ]);
+
+      setWindow('active-window', [['Read on:', `${day(active.read_on)}, from Instagram Insights (followers active by time of day, as Instagram reports it).`]]);
+      bars($('active-bars'), active.rows.map((r) => ({ label: r.hour, value: r.followers_active, text: num(r.followers_active) })));
+
+      const partnerPosts = posts.filter((p) => p.mentions_on || p.mentions_runnewport).sort((a, b) => b.date.localeCompare(a.date));
+      const countsOn = now.date;
+      if (partnerPosts.length) {
+        const pd = partnerPosts.map((p) => p.date).sort();
+        const on = partnerPosts.filter((p) => p.mentions_on).length;
+        const rn = partnerPosts.filter((p) => p.mentions_runnewport).length;
+        setWindow('partners-window', [
+          ['Posts dated:', `${day(pd[0])} to ${day(pd[pd.length - 1])}.`],
+          ['Counts as of:', `${day(countsOn)}.`],
+          ['Totals:', `${on} tag On, ${rn} tag Run Newport.`],
+        ]);
+      }
+      table($('partners-table'),
+        [['Date'], ['Post'], ['Partners'], ['Likes', 'num'], ['Comments', 'num'], ['Reel plays', 'num']],
+        partnerPosts.map((p) => [
+          [day(p.date)], [p.title, '', p.url],
+          [[p.mentions_on ? 'On' : '', p.mentions_runnewport ? 'Run Newport' : ''].filter(Boolean).join(', ')],
+          [p.likes == null ? 'hidden' : num(p.likes), 'num'], [num(p.comments), 'num'], [p.plays == null ? '' : num(p.plays), 'num'],
+        ]));
+
+      const all = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
+      const ad = all.map((p) => p.date).sort();
+      setWindow('posts-window', [
+        ['Posts dated:', `${day(ad[0])} to ${day(ad[ad.length - 1])} (every post since Oct 1, 2025, collabs included).`],
+        ['Counts as of:', `${day(countsOn)}.`],
+      ]);
+      table($('posts-table'),
+        [['Date'], ['Post'], ['Posted by', 'hide-sm'], ['Format', 'hide-sm'], ['Likes', 'num'], ['Comments', 'num'], ['Reel plays', 'num']],
+        all.map((p) => [
+          [day(p.date)], [p.title, '', p.url], [`@${p.owner}`, 'hide-sm'], [p.type, 'hide-sm'],
+          [p.likes == null ? 'hidden' : num(p.likes), 'num'], [num(p.comments), 'num'], [p.plays == null ? '' : num(p.plays), 'num'],
+        ]));
+
+      table($('log-table'), [['Date'], ['What was updated'], ['By'], ['How']],
+        entries.map((e) => [[day(e.date)], [e.what], [e.by], [e.how]]));
+    })
+    .catch((e) => {
+      $('stamp').replaceChildren(el('span', `Could not load ${e.message}. Open this page from its web address, not as a local file.`, 'err'));
+    });
+})();
+</script>
+</body>
+</html>
