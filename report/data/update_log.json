@@ -3,6 +3,12 @@
  "entries": [
   {
    "date": "2026-10-28",
+   "what": "Reach, views, interactions, profile visits, active times",
+   "by": "Isaac Rubinstein",
+   "how": "Copied from Instagram Insights on the club account, 'Last 30 days', saved as a page on October 28 and read off it"
+  },
+  {
+   "date": "2026-10-28",
    "what": "Followers, posts table (likes, comments, plays)",
    "by": "Isaac Rubinstein",
    "how": "Public counts pulled with a scraper (Apify) and matched post by post to the existing table; no new posts since October 13, so the post count is carried from that day. Insights not re-read; those figures stay dated October 13"

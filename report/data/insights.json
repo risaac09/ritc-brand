@@ -1,6 +1,24 @@
 [
  {
   "window": "Last 30 days",
+  "views": 48950,
+  "viewers": 13394,
+  "views_followers_share": 0.148,
+  "views_nonfollowers_share": 0.852,
+  "views_stories_share": 0.257,
+  "views_reels_share": 0.738,
+  "views_posts_share": 0.005,
+  "interactions": 1339,
+  "interactions_followers_share": 0.276,
+  "interactions_nonfollowers_share": 0.724,
+  "accounts_engaged": 1038,
+  "profile_visits": 522,
+  "followers": 700,
+  "source": "Instagram Insights, Professional dashboard, 'Last 30 days', read on the club account",
+  "read_on": "2026-10-28"
+ },
+ {
+  "window": "Last 30 days",
   "views": 45834,
   "viewers": 13989,
   "views_followers_share": 0.207,
