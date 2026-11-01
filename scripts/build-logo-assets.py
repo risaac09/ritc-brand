@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
-"""Build transparent PNGs and traced SVGs from the 2020 master badge JPGs.
+"""Build every logo file in assets/logo/ from the 2020 master JPGs.
 
-The masters are CMYK JPEGs on a solid white square. They are raster, they have
-no alpha, and they predate the 2026 kit. Everything this script produces is
-derived from them, so it inherits their limits. Read assets/logo/README.md
-before using any of it.
+The masters are CMYK JPEGs on a solid white square, drawn in the 2020 bright
+blue and yellow. Those colours are retired (brand/tokens.json, deprecated). This
+script never ships them: it works out, pixel by pixel, how much of each pixel
+was field, rope or anchor in the master, then repaints it in the 2026 singlet
+palette named in tokens.json under mark.variants. Anti-aliased edges keep their
+blend, so the rope and the wordmark stay as crisp as the master.
 
 What is faithful here:
-  - The transparent PNGs. The white square outside the badge circle is removed
-    with a geometric circular mask, so no pixel inside the badge is touched.
-    The white anchor survives because the mask is positional, not color keyed.
+  - The PNGs. The white square outside the badge circle is removed with a
+    geometric circular mask, so no pixel inside the badge is moved. Colour is
+    remapped, geometry is not.
+  - The badge SVG. The committed trace of the 2020 PNG lives in _source/, and
+    each fill is repainted with the same remap. No tracer is needed for it.
 
 What is an approximation:
-  - The SVGs. They are machine traces of a 1025px raster, not a redraw. The
-    rope border and the wordmark will not survive scrutiny at large sizes.
+  - The anchor, lifted out of the badge. See assets/logo/README.md.
+
+Colours come from brand/tokens.json only. No hex is written in this file.
 """
 
-import subprocess, sys
+import json, re, sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter
 import numpy as np
@@ -24,16 +29,117 @@ import numpy as np
 REPO = Path(__file__).resolve().parent.parent
 SRC = REPO / 'assets/logo/_source'
 OUT = REPO / 'assets/logo'
+COMMITTED = OUT
+TOKENS = json.loads((REPO / 'brand/tokens.json').read_text())
 SS = 4  # supersample factor for a clean mask edge
+SIZES = (1024, 512, 256, 128)
+RIM = 0.975  # outside this fraction of the radius, master white is background bleed
 
-BADGE_BLUE = (14, 92, 198)
-BADGE_YELLOW = (245, 224, 86)
-NAVY = (1, 30, 61)
+
+def hex_rgb(h):
+    h = h.lstrip('#')
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def palette(name):
+    """Look a palette entry up by name in color.primary or color.secondary."""
+    for group in ('primary', 'secondary'):
+        entry = TOKENS['color'][group].get(name)
+        if entry:
+            return hex_rgb(entry['hex'])
+    sys.exit(f'tokens.json has no palette colour named {name!r}')
+
+
+SOURCE = {k: hex_rgb(v) for k, v in TOKENS['deprecated']['badgeSource'].items()
+          if not k.startswith('$')}
+NAVY = palette('deepNavy')
 ANCHOR_COLORS = {
     'navy': NAVY,
-    'white': (255, 255, 255),
-    'teal': (162, 201, 207),
+    'white': palette('white'),
+    'teal': palette('babyOceanBlue'),  # file name kept so existing paths hold
 }
+
+
+def unmix(rgb):
+    """Weights of (field, rope, anchor) that best rebuild each pixel from the
+    master's three colours. Least squares with the weights held to sum to one,
+    then clipped and renormalised. rgb is (..., 3) float."""
+    m = np.array([SOURCE['field'], SOURCE['rope'], SOURCE['anchor']], float).T
+    k = 50.0  # weight of the sum-to-one row
+    a = np.vstack([m, k * np.ones((1, 3))])
+    shape = rgb.shape[:-1]
+    x = rgb.reshape(-1, 3).T
+    x = np.vstack([x, k * np.ones((1, x.shape[1]))])
+    w, *_ = np.linalg.lstsq(a, x, rcond=None)
+    w = np.clip(w, 0, None)
+    w /= w.sum(axis=0, keepdims=True) + 1e-9
+    return w.T.reshape(*shape, 3)
+
+
+def remap_badge(src_rgba, variant):
+    """Repaint a master-coloured badge in one of mark.variants."""
+    a = np.asarray(src_rgba.convert('RGBA')).astype(float)
+    w = unmix(a[..., :3])
+    # The outer few pixels blend the field with the master's white background.
+    # Left alone that white comes back as a light hairline round the badge, so
+    # outside RIM any anchor weight is handed to the field.
+    h, wd = a.shape[:2]
+    yy, xx = np.mgrid[0:h, 0:wd]
+    rr = np.hypot(xx - (wd - 1) / 2, yy - (h - 1) / 2) / (min(h, wd) / 2)
+    rim = rr > RIM
+    w[rim, 0] += w[rim, 2]
+    w[rim, 2] = 0
+    target = np.array([palette(variant['field']), palette(variant['rope']),
+                       palette(variant['anchor'])], float)
+    rgb = np.clip(np.einsum('...k,kc->...c', w, target), 0, 255)
+    out = np.dstack([rgb, a[..., 3]]).astype(np.uint8)
+    return Image.fromarray(out)
+
+
+def remap_bw(src_rgba, variant):
+    """The black and white master, repainted dark to light by luminance."""
+    a = np.asarray(src_rgba.convert('RGBA')).astype(float)
+    lum = np.einsum('...c,c->...', a[..., :3], np.array([0.2126, 0.7152, 0.0722])) / 255.0
+    # Same background bleed as the colour master: the rim goes to the dark.
+    h, wd = lum.shape
+    yy, xx = np.mgrid[0:h, 0:wd]
+    lum[np.hypot(xx - (wd - 1) / 2, yy - (h - 1) / 2) / (min(h, wd) / 2) > RIM] = 0.0
+    dark, light = np.array(palette(variant['dark']), float), np.array(palette(variant['light']), float)
+    rgb = dark + (light - dark) * lum[..., None]
+    out = np.dstack([np.clip(rgb, 0, 255), a[..., 3]]).astype(np.uint8)
+    return Image.fromarray(out)
+
+
+def remap_svg(src_svg, dst_svg, variant):
+    """Repaint every fill in the 2020 trace with the same remap as the PNGs.
+
+    Each traced path starts at its translate() point, so a path whose start
+    sits outside RIM is an edge speck of the master's white background, and
+    gets the same rim rule as the PNGs: its anchor share goes to the field."""
+    target = np.array([palette(variant['field']), palette(variant['rope']),
+                       palette(variant['anchor'])], float)
+    view = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', src_svg.read_text())
+    vw, vh = float(view.group(1)), float(view.group(2))
+
+    def repl(m):
+        tag = m.group(0)
+        fill = re.search(r'fill="#([0-9A-Fa-f]{6})"', tag)
+        if not fill:
+            return tag
+        w = unmix(np.array(hex_rgb(fill.group(1)), float)[None, :])[0]
+        t = re.search(r'translate\(([-\d.]+),\s*([-\d.]+)\)', tag)
+        if t:
+            x, y = float(t.group(1)), float(t.group(2))
+            if np.hypot(x - vw / 2, y - vh / 2) / (min(vw, vh) / 2) > RIM:
+                w = w.copy()
+                w[0] += w[2]
+                w[2] = 0
+        out = np.clip(np.einsum('k,kc->c', w, target), 0, 255).round().astype(int)
+        return tag.replace(fill.group(0), f'fill="#{out[0]:02X}{out[1]:02X}{out[2]:02X}"')
+
+    svg = re.sub(r'<path[^>]*>', repl, src_svg.read_text())
+    dst_svg.write_text(svg)
+    return dst_svg.stat().st_size
 
 
 def load_rgb(path):
@@ -69,31 +175,35 @@ def circular_alpha(size, cx, cy, r, inset=0.5):
     return big.resize((w, h), Image.LANCZOS)
 
 
-def build_transparent(src_path, stem):
+def cut_circle(src_path):
+    """The master with the white square outside the circle made transparent,
+    cropped tight to the circle. Still in the master's own colours."""
     rgb = load_rgb(src_path)
     cx, cy, r = find_circle(rgb)
     alpha = circular_alpha(rgb.size, cx, cy, r)
     out = rgb.convert('RGBA')
     out.putalpha(alpha)
-    # Crop tight to the circle so the asset has no dead margin.
     pad = 1
     box = (int(cx - r - pad), int(cy - r - pad), int(cx + r + pad), int(cy + r + pad))
-    out = out.crop(box)
+    return out.crop(box), (cx, cy, r)
+
+
+def save_sizes(img, stem):
     made = []
-    for px in (1024, 512, 256, 128):
+    for px in SIZES:
         name = f'{stem}-{px}.png' if px != 1024 else f'{stem}.png'
-        im = out.resize((px, px), Image.LANCZOS)
-        im.save(OUT / name, optimize=True)
+        img.resize((px, px), Image.LANCZOS).save(OUT / name, optimize=True)
         made.append((name, px, (OUT / name).stat().st_size))
-    return made, (cx, cy, r), out
+    return made
 
 
 def extract_anchor(badge_rgba):
-    """The anchor is the white shape inside the blue field. Lift it by keying
-    near-white pixels that sit inside the field, then recolor to navy so the
-    standalone mark matches the 2026 palette rather than the 2020 one.
+    """The anchor is the white shape inside the field. Lift it by keying
+    near-white pixels that sit inside the field of the master, then colour it
+    from the palette.
 
-    The wordmark is yellow and the rope is yellow, so neither is picked up.
+    The wordmark and the rope share one colour in the master, not white, so
+    neither is picked up.
     """
     a = np.asarray(badge_rgba).astype(np.int16)
     rgbp, alpha = a[..., :3], a[..., 3]
@@ -104,8 +214,8 @@ def extract_anchor(badge_rgba):
     inside = ((xx - cx) ** 2 + (yy - cy) ** 2) < (0.88 * min(h, w) / 2) ** 2
     white = (rgbp.min(axis=2) > 205) & (np.ptp(rgbp, axis=2) < 34)
     mask = (white & inside & (alpha > 128)).astype(np.uint8) * 255
-    m = Image.fromarray(mask, 'L').filter(ImageFilter.MedianFilter(3))
-    # The yellow wordmark sits ON TOP of the white anchor in the badge, so
+    m = Image.fromarray(mask).filter(ImageFilter.MedianFilter(3))
+    # The wordmark sits ON TOP of the white anchor in the badge, so
     # lifting the white shape leaves letter shaped holes. A morphological
     # closing (dilate then erode) heals the shackle ring and the small nicks.
     # It does NOT heal the notch in the shank or the cuts through the flukes,
@@ -197,20 +307,20 @@ def trace_silhouette(rgba_png, svg_path, upscale=2, speckle=12):
     return add_viewbox(svg_path), svg.count('<path')
 
 
-def main():
+def main(quiet=False):
     OUT.mkdir(parents=True, exist_ok=True)
     report = []
+    variants = TOKENS['mark']['variants']
 
-    color_src = SRC / 'ritc-badge-color-master.jpg'
-    bw_src = SRC / 'ritc-badge-bw-master.jpg'
+    master, circle = cut_circle(SRC / 'ritc-badge-color-master.jpg')
+    for key, stem in (('default', 'ritc-badge'), ('ocean', 'ritc-badge-ocean'),
+                      ('ebony', 'ritc-badge-ebony')):
+        report.append((f'badge {key} PNGs', save_sizes(remap_badge(master, variants[key]), stem), circle))
 
-    made, circle, badge = build_transparent(color_src, 'ritc-badge')
-    report.append(('badge color PNGs', made, circle))
+    master_bw, circle_bw = cut_circle(SRC / 'ritc-badge-bw-master.jpg')
+    report.append(('badge bw PNGs', save_sizes(remap_bw(master_bw, variants['bw']), 'ritc-badge-bw'), circle_bw))
 
-    made_bw, circle_bw, _ = build_transparent(bw_src, 'ritc-badge-bw')
-    report.append(('badge bw PNGs', made_bw, circle_bw))
-
-    anchor = extract_anchor(badge)
+    anchor = extract_anchor(master)
     anchor = anchor.crop(anchor.getbbox())
     anchor_alpha = anchor.getchannel('A')
     made_anchor = []
@@ -229,17 +339,25 @@ def main():
     navy_full.save(OUT / 'ritc-anchor.png', optimize=True)
     report.append(('anchor PNGs', [(f'{len(made_anchor)} files', anchor.size, 0)], None))
 
-    svgs = []
-    # Badge: colour trace off the largest PNG so the rope survives.
-    svgs.append(('ritc-badge.svg',
-                 trace_svg(OUT / 'ritc-badge.png', OUT / 'ritc-badge.svg',
-                           color_precision=6, filter_speckle=8)))
-    # Anchor: one recolourable path.
-    svgs.append(('ritc-anchor.svg',
-                 trace_silhouette(OUT / 'ritc-anchor.png', OUT / 'ritc-anchor.svg')))
-    report.append(('SVG traces', svgs, None))
+    trace = SRC / 'ritc-badge-2020-trace.svg'
+    if not trace.exists():
+        sys.exit(f'missing {trace}')
+    svgs = [('ritc-badge.svg', remap_svg(trace, OUT / 'ritc-badge.svg', variants['default'])),
+            ('ritc-badge-ocean.svg', remap_svg(trace, OUT / 'ritc-badge-ocean.svg', variants['ocean'])),
+            ('ritc-badge-ebony.svg', remap_svg(trace, OUT / 'ritc-badge-ebony.svg', variants['ebony']))]
+    # The anchor SVG is a binary trace and needs vtracer (pip install vtracer).
+    # It carries fill="currentColor", so it holds no colour and rarely needs a
+    # rebuild; skip it rather than fail when the tracer is missing.
+    try:
+        import vtracer  # noqa: F401
+        if not quiet:
+            svgs.append(('ritc-anchor.svg',
+                         trace_silhouette(OUT / 'ritc-anchor.png', OUT / 'ritc-anchor.svg')))
+    except ImportError:
+        svgs.append(('ritc-anchor.svg', 'kept as committed (vtracer not installed)'))
+    report.append(('SVGs', svgs, None))
 
-    for title, items, circle in report:
+    for title, items, circle in ([] if quiet else report):
         print(f'\n{title}:')
         for it in items:
             print('   ', it)
@@ -247,5 +365,37 @@ def main():
             print(f'    circle center=({circle[0]:.1f},{circle[1]:.1f}) r={circle[2]:.1f}')
 
 
+def verify():
+    """Rebuild into a scratch folder and compare with the committed files, so
+    CI can prove every badge file still comes out of tokens.json. PNGs are
+    compared by pixel, not by byte, because encoders differ between Pillow
+    versions. Exit 1 on any difference."""
+    global OUT
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        OUT = Path(tmp)
+        main(quiet=True)
+        bad = []
+        for built in sorted(OUT.iterdir()):
+            committed = COMMITTED / built.name
+            if built.name == 'ritc-anchor.svg':
+                continue  # needs vtracer; holds no colour
+            if not committed.exists():
+                bad.append(f'{built.name}: built but not committed')
+            elif built.suffix == '.png':
+                a = np.asarray(Image.open(built).convert('RGBA')).astype(int)
+                b = np.asarray(Image.open(committed).convert('RGBA')).astype(int)
+                if a.shape != b.shape or np.abs(a - b).max() > 1:
+                    bad.append(f'{built.name}: committed pixels differ from the build')
+            elif built.read_bytes() != committed.read_bytes():
+                bad.append(f'{built.name}: committed file differs from the build')
+    for b in bad:
+        print(b)
+    if bad:
+        print('\nRun scripts/build-logo-assets.py and commit the result.', file=sys.stderr)
+        sys.exit(1)
+    print('build-logo-assets: committed files match tokens.json.')
+
+
 if __name__ == '__main__':
-    main()
+    verify() if '--verify' in sys.argv[1:] else main()

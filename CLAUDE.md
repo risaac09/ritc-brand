@@ -28,8 +28,14 @@ and carries a superseded palette. Where they disagree, this repo wins.
 - No build step, no framework. A template is one HTML file that renders when
   opened. Exports go through Playwright in `scripts/export.mjs` and land in
   `exports/`, which is gitignored.
-- The badge is blue and yellow and is never recolored. The maple leaf is
-  deliberate. It is the club's real mark.
+- The badge is in the singlet palette: Deep Navy field, Sand rope and
+  wordmark, White anchor, maple leaf kept. Every badge file comes out of
+  `scripts/build-logo-assets.py` from `mark.variants` in `tokens.json`. Never
+  use the 2020 blue and yellow master, never recolour a badge by hand.
+- Retired colours are listed in `tokens.json` under `deprecated`.
+  `scripts/check-brand.py` fails on any of them in a file and on the 2020
+  badge in any image or video. Run it before every commit and on every render
+  that leaves this repo.
 - Sand and Ebony frame. Baby Ocean Blue, Deep Navy, and White fill. Only two
   layer pairs are legal: Sand over Navy, Ebony over Baby Ocean Blue or White.
 - Baby Ocean Blue is never type on white. White is never type on Sand.
@@ -102,6 +108,8 @@ machine. So:
 
 ## Verification before you say a thing is done
 
+- Anything rendered, in or out of this repo: `scripts/check-brand.py <path>`
+  exits 0. A reel or a Resolve export counts.
 - A graphic: open the export, confirm the canvas size is exactly the
   template's declared size times the scale, confirm the badge is not cropped
   and has its clear space, confirm no text sits in a forbidden pairing.
